@@ -195,6 +195,8 @@ The Zephyr b_u585i_iot02a board configuration supports the following hardware fe
 +-----------+------------+-------------------------------------+
 | AES       | on-chip    | crypto                              |
 +-----------+------------+-------------------------------------+
+| EEPROM    | on-chip    | eeprom/at2x                         |
++-----------+------------+-------------------------------------+
 
 The default configuration can be found in the defconfig file:
 
