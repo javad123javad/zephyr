@@ -23,6 +23,7 @@
 		led0 = &green_led_1;
 		led1 = &red_led_1;
 		sw0 = &user_button;
+
 	};
 };
 
