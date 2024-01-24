@@ -12,6 +12,9 @@ LOG_MODULE_REGISTER(tlc59731,LOG_LEVEL_DBG);
 /* 1000 msec = 1 sec */
 #define SLEEP_TIME_MS   1000
 #define T_WO			125 //ns
+#define T_SDI			500 //ns
+#define latch_length 160
+#define eos_length 70
 /* The devicetree node identifier for the "led0" alias. */
 #define LED0_NODE DT_ALIAS(led0)
 #define LED0_CS_NODE DT_ALIAS(led0cs)
@@ -25,22 +28,37 @@ static const struct gpio_dt_spec led_cs = GPIO_DT_SPEC_GET(LED0_CS_NODE, gpios);
 int32_t rgb_pulse()
 {
     int32_t fret = 0;
-    fret = gpio_pin_set_dt(&led, 0);
-    if(0 != fret)
-    {
-        LOG_ERR("Pulse error");
-        return fret;
-    }
-    k_sleep(K_NSEC(T_WO));
+
     fret = gpio_pin_set_dt(&led, 1);
     if(0 != fret)
     {
         LOG_ERR("Pulse error");
         return fret;
     }
+    fret = gpio_pin_set_dt(&led, 0);
+    if(0 != fret)
+    {
+        LOG_ERR("Pulse error");
+        return fret;
+    }
 
-	return fret;
+    return fret;
 
+}
+
+int32_t rgb_gslat()
+{
+    int32_t fret = 0;
+    fret = gpio_pin_set_dt(&led, 1);
+    k_sleep(K_USEC(50));
+    fret = gpio_pin_set_dt(&led, 0);
+    k_sleep(K_NSEC(20));
+    fret = gpio_pin_set_dt(&led, 1);
+    k_sleep(K_USEC(50));
+    fret = gpio_pin_set_dt(&led, 0);
+    k_sleep(K_NSEC(20));
+    fret = gpio_pin_set_dt(&led, 1);
+    return fret;
 }
 int32_t init_rgb_led()
 {
@@ -82,11 +100,72 @@ int32_t init_rgb_led()
 
     return fret;
 }
+void rgb_write_bit(uint8_t data)
+{
+    int32_t fret = 0;
+    fret = rgb_pulse();
+
+    if(data)
+    {
+        rgb_pulse();
+
+        k_sleep(K_NSEC(30));
+    }
+    else
+    {
+        k_sleep(K_USEC(2));
+    }/**/
+}
+int32_t rgb_write_data(uint8_t data )
+{
+    int32_t fret = 0;
+    uint8_t idx = 0;
+    rgb_write_bit(data & (1<<7));
+    rgb_write_bit(data & (1<<6));
+    rgb_write_bit(data & (1<<5));
+    rgb_write_bit(data & (1<<4));
+    rgb_write_bit(data & (1<<3));
+    rgb_write_bit(data & (1<<2));
+    rgb_write_bit(data & (1<<1));
+    rgb_write_bit(data & (1<<0));
+}
+
+int32_t rgb_eos()
+{
+    k_sleep(K_USEC(eos_length));
+    return 0;
+}
+
+int32_t rgb_latch()
+{
+    k_sleep(K_USEC(latch_length));
+}
+
+int32_t rgb_write_led(uint8_t r, uint8_t g, uint8_t b, bool latch)
+{
+    rgb_write_data(0b00111010);
+    rgb_write_data(r);
+    rgb_write_data(g);
+    rgb_write_data(b);
+
+    if(latch)
+    {
+        rgb_latch();
+    }
+    else
+    {
+        rgb_eos();
+    }
+}
+
 int main(void)
 {
 
     LOG_DBG("Init RGB");
-    init_rgb_led();
+    // init_rgb_led();
+
+    // rgb_gslat();
+	rgb_write_led(0xFA,0xEB,0xFF,false);
 
 
 
