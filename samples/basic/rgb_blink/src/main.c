@@ -11,10 +11,15 @@
 LOG_MODULE_REGISTER(tlc59731,LOG_LEVEL_DBG);
 /* 1000 msec = 1 sec */
 #define SLEEP_TIME_MS   1000
-#define T_WO			125 //ns
-#define T_SDI			500 //ns
+#define DELAY           1//us
+#define T_CYCLE_0       4//us
+#define T_CYCLE_1       1//us
+#define HIGH            1
+#define LOW             0
+
 #define latch_length 160
 #define eos_length 70
+ 
 /* The devicetree node identifier for the "led0" alias. */
 #define LED0_NODE DT_ALIAS(led0)
 #define LED0_CS_NODE DT_ALIAS(led0cs)
@@ -29,37 +34,26 @@ int32_t rgb_pulse()
 {
     int32_t fret = 0;
 
-    fret = gpio_pin_set_dt(&led, 1);
+    fret = gpio_pin_set_dt(&led, HIGH);
     if(0 != fret)
     {
         LOG_ERR("Pulse error");
         return fret;
     }
-    fret = gpio_pin_set_dt(&led, 0);
+    // k_busy_wait(DELAY/10);
+    fret = gpio_pin_set_dt(&led, LOW);
     if(0 != fret)
     {
         LOG_ERR("Pulse error");
         return fret;
     }
+    // k_busy_wait(DELAY);
 
     return fret;
 
 }
 
-int32_t rgb_gslat()
-{
-    int32_t fret = 0;
-    fret = gpio_pin_set_dt(&led, 1);
-    k_sleep(K_USEC(50));
-    fret = gpio_pin_set_dt(&led, 0);
-    k_sleep(K_NSEC(20));
-    fret = gpio_pin_set_dt(&led, 1);
-    k_sleep(K_USEC(50));
-    fret = gpio_pin_set_dt(&led, 0);
-    k_sleep(K_NSEC(20));
-    fret = gpio_pin_set_dt(&led, 1);
-    return fret;
-}
+
 int32_t init_rgb_led()
 {
     int32_t fret = -1;
@@ -84,19 +78,19 @@ int32_t init_rgb_led()
     }
 
     /* Enable RGB chip select */
-    fret = gpio_pin_set_dt(&led_cs, 0);
+    fret = gpio_pin_set_dt(&led_cs, HIGH);
     if(fret < 0)
     {
         return fret;
     }
 
-    fret = gpio_pin_set_dt(&led, 1);
+    fret = gpio_pin_set_dt(&led, 0);
     if(fret < 0)
     {
         return fret;
     }
 
-
+    k_msleep(10);
 
     return fret;
 }
@@ -104,22 +98,31 @@ void rgb_write_bit(uint8_t data)
 {
     int32_t fret = 0;
     fret = rgb_pulse();
+    // gpio_pin_set_dt(&led, HIGH);
+    // k_busy_wait(DELAY/10);
+    // gpio_pin_set_dt(&led, LOW);
+    
+    k_busy_wait(DELAY);
 
     if(data)
     {
         rgb_pulse();
+        // k_busy_wait(T_CYCLE_1);
 
-        k_sleep(K_NSEC(30));
+        // gpio_pin_set_dt(&led, HIGH);
+        // k_usleep(DELAY/10);
+        // gpio_pin_set_dt(&led, LOW);
+        k_busy_wait(T_CYCLE_1);
+
     }
     else
     {
-        k_sleep(K_USEC(2));
+        k_busy_wait(T_CYCLE_0);
+
     }/**/
 }
 int32_t rgb_write_data(uint8_t data )
 {
-    int32_t fret = 0;
-    uint8_t idx = 0;
     rgb_write_bit(data & (1<<7));
     rgb_write_bit(data & (1<<6));
     rgb_write_bit(data & (1<<5));
@@ -132,18 +135,21 @@ int32_t rgb_write_data(uint8_t data )
 
 int32_t rgb_eos()
 {
-    k_sleep(K_USEC(eos_length));
+    k_busy_wait(eos_length);
     return 0;
 }
 
 int32_t rgb_latch()
 {
-    k_sleep(K_USEC(latch_length));
+    k_busy_wait(latch_length);
+
+    return 0;
+
 }
 
 int32_t rgb_write_led(uint8_t r, uint8_t g, uint8_t b, bool latch)
 {
-    rgb_write_data(0b00111010);
+    rgb_write_data(0x3A);//0x3A;write command
     rgb_write_data(r);
     rgb_write_data(g);
     rgb_write_data(b);
@@ -162,24 +168,25 @@ int main(void)
 {
 
     LOG_DBG("Init RGB");
-    // init_rgb_led();
+    int32_t fret = init_rgb_led();
+    if(fret < 0)
+    {
+        LOG_ERR("init_rgb_led");
+        return fret;
+    }
 
-    // rgb_gslat();
-	rgb_write_led(0xFA,0xEB,0xFF,false);
 
+    gpio_pin_set_dt(&led, HIGH);
+    // k_busy_wait(DELAY/10);
+    gpio_pin_set_dt(&led, LOW);
 
+    k_busy_wait((DELAY +T_CYCLE_0 ));
+    // rgb_write_led(0xFF,0xFF,0xFF,false);
 
     while (1) {
-        /*
-        	ret = gpio_pin_toggle_dt(&led);
-        	if (ret < 0) {
-        		return 0;
-        	}
-
-        	led_state = !led_state;
-        	printf("LED state: %s\n", led_state ? "ON" : "OFF");
-        */
-        k_msleep(SLEEP_TIME_MS);
+        rgb_write_led(0x71,0x51,0x10,false);
+        k_usleep(SLEEP_TIME_MS);
     }
+    
     return 0;
 }
