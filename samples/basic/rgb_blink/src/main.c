@@ -40,14 +40,13 @@ int32_t rgb_pulse()
         LOG_ERR("Pulse error");
         return fret;
     }
-    // k_busy_wait(DELAY/10);
+
     fret = gpio_pin_set_dt(&led, LOW);
     if(0 != fret)
     {
         LOG_ERR("Pulse error");
         return fret;
     }
-    // k_busy_wait(DELAY);
 
     return fret;
 
@@ -98,22 +97,13 @@ void rgb_write_bit(uint8_t data)
 {
     int32_t fret = 0;
     fret = rgb_pulse();
-    // gpio_pin_set_dt(&led, HIGH);
-    // k_busy_wait(DELAY/10);
-    // gpio_pin_set_dt(&led, LOW);
     
     k_busy_wait(DELAY);
 
     if(data)
     {
         rgb_pulse();
-        // k_busy_wait(T_CYCLE_1);
-
-        // gpio_pin_set_dt(&led, HIGH);
-        // k_usleep(DELAY/10);
-        // gpio_pin_set_dt(&led, LOW);
         k_busy_wait(T_CYCLE_1);
-
     }
     else
     {
@@ -177,15 +167,17 @@ int main(void)
 
 
     gpio_pin_set_dt(&led, HIGH);
-    // k_busy_wait(DELAY/10);
     gpio_pin_set_dt(&led, LOW);
 
     k_busy_wait((DELAY +T_CYCLE_0 ));
-    // rgb_write_led(0xFF,0xFF,0xFF,false);
 
+    uint8_t dimmer = 0xFF;
     while (1) {
-        rgb_write_led(0x71,0x51,0x10,false);
-        k_usleep(SLEEP_TIME_MS);
+        rgb_write_led(dimmer,-dimmer,dimmer,false);
+
+        
+        dimmer--;
+        k_msleep(5);
     }
     
     return 0;
