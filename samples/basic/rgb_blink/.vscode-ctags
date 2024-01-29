@@ -1,0 +1,31 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/javad/zephyrproject/zephyr/samples/basic/rgb_blink/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	//
+DELAY	src/main.c	/^#define DELAY /;"	d	file:
+HIGH	src/main.c	/^#define HIGH /;"	d	file:
+LED0_CS_NODE	src/main.c	/^#define LED0_CS_NODE /;"	d	file:
+LED0_NODE	src/main.c	/^#define LED0_NODE /;"	d	file:
+LOW	src/main.c	/^#define LOW /;"	d	file:
+SLEEP_TIME_MS	src/main.c	/^#define SLEEP_TIME_MS /;"	d	file:
+T_CYCLE_0	src/main.c	/^#define T_CYCLE_0 /;"	d	file:
+T_CYCLE_1	src/main.c	/^#define T_CYCLE_1 /;"	d	file:
+eos_length	src/main.c	/^#define eos_length /;"	d	file:
+init_rgb_led	src/main.c	/^int32_t init_rgb_led()$/;"	f	typeref:typename:int32_t
+latch_length	src/main.c	/^#define latch_length /;"	d	file:
+led	src/main.c	/^static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);$/;"	v	typeref:typename:const struct gpio_dt_spec	file:
+led_cs	src/main.c	/^static const struct gpio_dt_spec led_cs = GPIO_DT_SPEC_GET_BY_IDX(DT_NODELABEL(leds_cs), cs_gpio/;"	v	typeref:typename:const struct gpio_dt_spec	file:
+main	src/main.c	/^int main(void)$/;"	f	typeref:typename:int
+rgb_eos	src/main.c	/^int32_t rgb_eos()$/;"	f	typeref:typename:int32_t
+rgb_latch	src/main.c	/^int32_t rgb_latch()$/;"	f	typeref:typename:int32_t
+rgb_pulse	src/main.c	/^int32_t rgb_pulse()$/;"	f	typeref:typename:int32_t
+rgb_write_bit	src/main.c	/^void rgb_write_bit(uint8_t data)$/;"	f	typeref:typename:void
+rgb_write_data	src/main.c	/^int32_t rgb_write_data(uint8_t data )$/;"	f	typeref:typename:int32_t
+rgb_write_led	src/main.c	/^int32_t rgb_write_led(uint8_t r, uint8_t g, uint8_t b, bool latch)$/;"	f	typeref:typename:int32_t

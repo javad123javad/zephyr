@@ -30,10 +30,25 @@
                         gpios = <&gpioa 7 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
                         label = "RGB_LED";
                 };
+
 		rgb_cs: rgb_cs {
 			gpios = <&gpioh 1 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
 			label = "RGB_LED_CS";
 		};
+
+		ir_led: ir_led1 {
+			gpios = <&gpiob 9 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			label = "IR LED";
+		};
+
+	};
+
+	rgb_leds: rgb_leds {
+		compatible = "ti,tlc59731";
+		sdi-gpios = <&gpioa 7 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
+		enable-gpios = <&gpioh 1 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+		label = "RGB LED";
+		status = "okay";
 	};
 
 	gpio_keys {
@@ -61,7 +76,8 @@
 		spi-flash0= &s25fl128s;
 		accel0 =&ism330dhcx;
 		led0 = &rgb_led;
-		led0cs=&rgb_cs;
+		led0cs= &rgb_cs;
+		rgblld=&rgb_leds;
 	};
 };
 

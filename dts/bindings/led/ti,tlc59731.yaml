@@ -1,0 +1,16 @@
+# Copyright (c) 2020 Seagate Technology LLC
+# SPDX-License-Identifier: Apache-2.0
+
+include: ["led-controller.yaml"]
+
+properties:
+  enable-gpios:
+    type: phandle-array
+    description: |
+      GPIO to use to enable/disable the controller.
+  sdi-gpios:
+    required: true
+    type: phandle-array
+    description: |
+      GPIO to send command data to the controller.
+

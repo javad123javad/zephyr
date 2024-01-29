@@ -8,7 +8,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(tlc59731,LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(tlc59731_,LOG_LEVEL_DBG);
 /* 1000 msec = 1 sec */
 #define SLEEP_TIME_MS   1000
 #define DELAY           1//us
@@ -19,16 +19,19 @@ LOG_MODULE_REGISTER(tlc59731,LOG_LEVEL_DBG);
 
 #define latch_length 160
 #define eos_length 70
- 
+
 /* The devicetree node identifier for the "led0" alias. */
 #define LED0_NODE DT_ALIAS(led0)
 #define LED0_CS_NODE DT_ALIAS(led0cs)
+#define LED_CNTRL DT_ALIAS(rgblld)
 /*
  * A build error on this line means your board is unsupported.
  * See the sample documentation for information on how to fix this.
  */
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 static const struct gpio_dt_spec led_cs = GPIO_DT_SPEC_GET(LED0_CS_NODE, gpios);
+const struct device *tlc59731 = DEVICE_DT_GET_ONE(ti_tlc59731);
+// static const struct gpio_dt_spec led_cs = GPIO_DT_SPEC_GET(LED0_CS_NODE, gpios);;//GPIO_DT_SPEC_INST_GET_BY_IDX(DT_NODELABEL(led_cs), gpios, 1);
 
 int32_t rgb_pulse()
 {
@@ -156,7 +159,13 @@ int32_t rgb_write_led(uint8_t r, uint8_t g, uint8_t b, bool latch)
 
 int main(void)
 {
+    if (tlc59731) {
+        LOG_DBG("Found LED controller %s", tlc59731->name);
+    }
 
+
+
+#if 0
     LOG_DBG("Init RGB");
     int32_t fret = init_rgb_led();
     if(fret < 0)
@@ -179,6 +188,6 @@ int main(void)
         dimmer--;
         k_msleep(5);
     }
-    
+#endif
     return 0;
 }
