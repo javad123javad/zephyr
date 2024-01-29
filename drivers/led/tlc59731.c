@@ -11,18 +11,27 @@
  * @brief LED driver for the TLC59731 I2C LED driver
  */
 
-#include <zephyr/drivers/i2c.h>
 #include <zephyr/drivers/led.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/drivers/gpio.h>
 
 LOG_MODULE_REGISTER(tlc59731, CONFIG_LED_LOG_LEVEL);
 
 #include "led_context.h"
 
+#define DELAY           1//us
+#define T_CYCLE_0       4//us
+#define T_CYCLE_1       1//us
+#define HIGH            1
+#define LOW             0
+
+
 struct tlc59731_cfg {
-	int sdi_port;
+	const struct gpio_dt_spec *sdi_gpio;
+	const struct gpio_dt_spec *cs_gpio;
+
 };
 
 struct tlc59731_data {
@@ -52,7 +61,7 @@ static int tlc59731_led_set_brightness(const struct device *dev, uint32_t led,
 	const struct tlc59731_cfg *config = dev->config;
 	struct tlc59731_data *data = dev->data;
 	struct led_data *dev_data = &data->dev_data;
-	
+
 	return 0;
 }
 
@@ -73,6 +82,7 @@ static int tlc59731_led_init(const struct device *dev)
 	struct led_data *dev_data = &data->dev_data;
 
 
+
 	return 0;
 }
 
@@ -83,15 +93,17 @@ static const struct led_driver_api tlc59731_led_api = {
 	.off = tlc59731_led_off,
 };
 
-#define TLC59731_DEVICE(id) \
-	static const struct tlc59731_cfg tlc59731_##id##_cfg = {	\
-	};								\
-	static struct tlc59731_data tlc59731_##id##_data;		\
-									\
-	DEVICE_DT_INST_DEFINE(id, &tlc59731_led_init, NULL,		\
-			&tlc59731_##id##_data,				\
-			&tlc59731_##id##_cfg, POST_KERNEL,		\
-			CONFIG_LED_INIT_PRIORITY,			\
-			&tlc59731_led_api);
+#define TLC59731_DEVICE(i)                                      \
+                                                                \
+static const struct tlc59731_cfg tlc59731_cfg_##i = {		\
+        .sdi_gpio =  GPIO_DT_SPEC_INST_GET(i, sdi_gpios), 	\
+	.cs_gpio  = GPIO_DT_SPEC_INST_GET(i, enable_gpios), 	\
+};                                                              \
+DEVICE_DT_INST_DEFINE(i, &tlc59731_led_init, NULL,              \
+                      NULL, &tlc59731_cfg_##i,               \
+                      POST_KERNEL, CONFIG_LED_INIT_PRIORITY,    \
+                      &tlc59731_led_api);
+
+
 
 DT_INST_FOREACH_STATUS_OKAY(TLC59731_DEVICE)

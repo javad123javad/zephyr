@@ -4,7 +4,7 @@
 config TLC59731
         bool "TLC59731 LED controller"
         default y
-        #depends on DT_HAS_TI_TLC59731_ENABLED
+        depends on DT_HAS_TI_TLC59731_ENABLED
         select GPIO
         help
           Enable driver for the Texas Instruments TLC59731 EasySet LED
