@@ -10,13 +10,12 @@
  * @file
  * @brief LED driver for the TLC59731 I2C LED driver
  */
-
 #include <zephyr/drivers/led.h>
-#include <zephyr/sys/util.h>
-#include <zephyr/kernel.h>
-#include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/device.h>
+#include <zephyr/kernel.h>
 
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(tlc59731, CONFIG_LED_LOG_LEVEL);
 
 #include "led_context.h"
@@ -29,19 +28,90 @@ LOG_MODULE_REGISTER(tlc59731, CONFIG_LED_LOG_LEVEL);
 
 
 struct tlc59731_cfg {
-	const struct gpio_dt_spec *sdi_gpio;
-	const struct gpio_dt_spec *cs_gpio;
-
+	struct gpio_dt_spec sdi_gpio;
 };
 
 struct tlc59731_data {
 	struct led_data dev_data;
 };
+/*****************************/
+static int rgb_pulse(struct gpio_dt_spec * led_dev)
+{
+    int32_t fret = 0;
+
+    fret = gpio_pin_set_dt(led_dev, HIGH);
+    if(0 != fret)
+    {
+        return fret;
+    }
+
+    fret = gpio_pin_set_dt(led_dev, LOW);
+    if(0 != fret)
+    {
+        return fret;
+    }
+
+    return fret;
+
+}
+
+int rgb_write_bit(struct gpio_dt_spec * led_dev, int8_t data)
+{
+    int err = 0;
+    rgb_pulse(led_dev);
+
+    k_busy_wait(DELAY);
+
+    if(data)
+    {
+        rgb_pulse(led_dev);
+        k_busy_wait(T_CYCLE_1);
+    }
+    else
+    {
+        k_busy_wait(T_CYCLE_0);
+
+    }
+
+    return err;
+}
+
+static int rgb_write_data(struct gpio_dt_spec * led_dev, uint8_t data )
+{
+    rgb_write_bit(led_dev, data & (1<<7));
+    rgb_write_bit(led_dev, data & (1<<6));
+    rgb_write_bit(led_dev, data & (1<<5));
+    rgb_write_bit(led_dev, data & (1<<4));
+    rgb_write_bit(led_dev, data & (1<<3));
+    rgb_write_bit(led_dev, data & (1<<2));
+    rgb_write_bit(led_dev, data & (1<<1));
+    rgb_write_bit(led_dev, data & (1<<0));
+
+    return 0;
+}
+
+static int rgb_write_led(struct gpio_dt_spec * led_dev, uint8_t r, uint8_t g, uint8_t b, bool latch)
+{
+    rgb_write_data(led_dev, 0x3A);//0x3A;write command
+    rgb_write_data(led_dev, r);
+    rgb_write_data(led_dev, g);
+    rgb_write_data(led_dev, b);
+#if 0
+    if(latch)
+    {
+        rgb_latch();
+    }
+    else
+    {
+        rgb_eos();
+    }
+#endif
+
+}
 
 static int tlc59731_set_ledout(const struct device *dev, uint32_t led,
 		uint8_t val)
 {
-	const struct tlc59731_cfg *config = dev->config;
 
 	return 0;
 }
@@ -49,18 +119,12 @@ static int tlc59731_set_ledout(const struct device *dev, uint32_t led,
 static int tlc59731_led_blink(const struct device *dev, uint32_t led,
 		uint32_t delay_on, uint32_t delay_off)
 {
-	const struct tlc59731_cfg *config = dev->config;
-	struct tlc59731_data *data = dev->data;
-	struct led_data *dev_data = &data->dev_data;
 	return 0;
 }
 
 static int tlc59731_led_set_brightness(const struct device *dev, uint32_t led,
 		uint8_t value)
 {
-	const struct tlc59731_cfg *config = dev->config;
-	struct tlc59731_data *data = dev->data;
-	struct led_data *dev_data = &data->dev_data;
 
 	return 0;
 }
@@ -77,13 +141,35 @@ static inline int tlc59731_led_off(const struct device *dev, uint32_t led)
 
 static int tlc59731_led_init(const struct device *dev)
 {
-	const struct tlc59731_cfg *config = dev->config;
-	struct tlc59731_data *data = dev->data;
-	struct led_data *dev_data = &data->dev_data;
+	const struct tlc59731_cfg  *tlc_conf = dev->config;
+	const struct gpio_dt_spec *led = &tlc_conf->sdi_gpio;
+	int err = 0;
 
+	if (!device_is_ready(led->port)) 
+	{
+		LOG_ERR("%s: no LEDs found (DT child nodes missing)", dev->name);
+        	err = -ENODEV;
+    	}
 
+	err = gpio_pin_configure_dt(led, GPIO_OUTPUT_ACTIVE);
+	if (err < 0) {
+        	LOG_ERR("%s: no LEDs found (DT child nodes missing)", dev->name);
 
-	return 0;
+        	err = -EIO;
+    	}
+
+	err = gpio_pin_set_dt(led, LOW);
+    	if(err < 0)
+    	{
+		LOG_ERR("%s: Unable to set the SDI-GPIO)", dev->name);
+        	err = -EIO;
+    	}
+	gpio_pin_set_dt(led, HIGH);
+    	gpio_pin_set_dt(led, LOW);
+	
+	k_busy_wait((DELAY + T_CYCLE_0 ));	
+	
+	return err;
 }
 
 static const struct led_driver_api tlc59731_led_api = {
@@ -94,16 +180,15 @@ static const struct led_driver_api tlc59731_led_api = {
 };
 
 #define TLC59731_DEVICE(i)                                      \
-                                                                \
-static const struct tlc59731_cfg tlc59731_cfg_##i = {		\
-        .sdi_gpio =  GPIO_DT_SPEC_INST_GET(i, sdi_gpios), 	\
-	.cs_gpio  = GPIO_DT_SPEC_INST_GET(i, enable_gpios), 	\
+static struct tlc59731_cfg tlc59731_cfg_##i = {			\
+        .sdi_gpio =  GPIO_DT_SPEC_INST_GET(i, gpios),		\
 };                                                              \
+								\
 DEVICE_DT_INST_DEFINE(i, &tlc59731_led_init, NULL,              \
-                      NULL, &tlc59731_cfg_##i,               \
-                      POST_KERNEL, CONFIG_LED_INIT_PRIORITY,    \
-                      &tlc59731_led_api);
-
+                      NULL, &tlc59731_cfg_##i,               	\
+                      POST_KERNEL, CONFIG_LED_INIT_PRIORITY,	\
+                      &tlc59731_led_api);			\
 
 
 DT_INST_FOREACH_STATUS_OKAY(TLC59731_DEVICE)
+

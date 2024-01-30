@@ -1,14 +1,17 @@
 # Copyright (c) 2020 Seagate Technology LLC
 # SPDX-License-Identifier: Apache-2.0
-description: TLC59731 RGB LED Controller
-include: ["led-controller.yaml"]
+
 compatible: "ti,tlc59731"
+description: TLC59731 RGB LED Controller
+
+  #child-binding:
+  # include: ["led-controller.yaml"]
 properties:
   enable-gpios:
     type: phandle-array
     description: |
       GPIO to use to enable/disable the controller.
-  sdi-gpios:
+  gpios:
     required: true
     type: phandle-array
     description: |

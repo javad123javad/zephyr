@@ -30,8 +30,8 @@ LOG_MODULE_REGISTER(tlc59731_,LOG_LEVEL_DBG);
  */
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 static const struct gpio_dt_spec led_cs = GPIO_DT_SPEC_GET(LED0_CS_NODE, gpios);
-const struct device *tlc59731 = DEVICE_DT_GET_ONE(ti_tlc59731);
-// static const struct gpio_dt_spec led_cs = GPIO_DT_SPEC_GET(LED0_CS_NODE, gpios);;//GPIO_DT_SPEC_INST_GET_BY_IDX(DT_NODELABEL(led_cs), gpios, 1);
+const struct device *tlc59731 = DEVICE_DT_GET(LED_CNTRL);
+//static const struct gpio_dt_spec led_cs = GPIO_DT_SPEC_GET(LED0_CS_NODE, gpios);;//GPIO_DT_SPEC_INST_GET_BY_IDX(DT_NODELABEL(led_cs), gpios, 1);
 
 int32_t rgb_pulse()
 {
@@ -96,35 +96,35 @@ int32_t init_rgb_led()
 
     return fret;
 }
-void rgb_write_bit(uint8_t data)
-{
-    int32_t fret = 0;
-    fret = rgb_pulse();
+// void rgb_write_bit(uint8_t data)
+// {
+//     int32_t fret = 0;
+//     fret = rgb_pulse();
     
-    k_busy_wait(DELAY);
+//     k_busy_wait(DELAY);
 
-    if(data)
-    {
-        rgb_pulse();
-        k_busy_wait(T_CYCLE_1);
-    }
-    else
-    {
-        k_busy_wait(T_CYCLE_0);
+//     if(data)
+//     {
+//         rgb_pulse();
+//         k_busy_wait(T_CYCLE_1);
+//     }
+//     else
+//     {
+//         k_busy_wait(T_CYCLE_0);
 
-    }/**/
-}
-int32_t rgb_write_data(uint8_t data )
-{
-    rgb_write_bit(data & (1<<7));
-    rgb_write_bit(data & (1<<6));
-    rgb_write_bit(data & (1<<5));
-    rgb_write_bit(data & (1<<4));
-    rgb_write_bit(data & (1<<3));
-    rgb_write_bit(data & (1<<2));
-    rgb_write_bit(data & (1<<1));
-    rgb_write_bit(data & (1<<0));
-}
+//     }/**/
+// }
+// int32_t rgb_write_data(uint8_t data )
+// {
+//     rgb_write_bit(data & (1<<7));
+//     rgb_write_bit(data & (1<<6));
+//     rgb_write_bit(data & (1<<5));
+//     rgb_write_bit(data & (1<<4));
+//     rgb_write_bit(data & (1<<3));
+//     rgb_write_bit(data & (1<<2));
+//     rgb_write_bit(data & (1<<1));
+//     rgb_write_bit(data & (1<<0));
+// }
 
 int32_t rgb_eos()
 {
@@ -140,22 +140,22 @@ int32_t rgb_latch()
 
 }
 
-int32_t rgb_write_led(uint8_t r, uint8_t g, uint8_t b, bool latch)
-{
-    rgb_write_data(0x3A);//0x3A;write command
-    rgb_write_data(r);
-    rgb_write_data(g);
-    rgb_write_data(b);
+// int32_t rgb_write_led(uint8_t r, uint8_t g, uint8_t b, bool latch)
+// {
+//     rgb_write_data(0x3A);//0x3A;write command
+//     rgb_write_data(r);
+//     rgb_write_data(g);
+//     rgb_write_data(b);
 
-    if(latch)
-    {
-        rgb_latch();
-    }
-    else
-    {
-        rgb_eos();
-    }
-}
+//     if(latch)
+//     {
+//         rgb_latch();
+//     }
+//     else
+//     {
+//         rgb_eos();
+//     }
+// }
 
 int main(void)
 {
