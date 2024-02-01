@@ -69,6 +69,32 @@ int test_rgb_brightness(void)
 
 	return fret;
 }
+void set_colors(uint8_t *colors, uint8_t r, uint8_t g, uint8_t b)
+{
+	colors[0] = r;
+	colors[1] = g;
+	colors[2] = b;
+}
+int test_rgb_set_color(void)
+{
+	int fret = 0;
+	uint8_t colors[] = {213,184,87};
+	led_set_color(tlc59731, 0,3, colors);
+        k_msleep(1000);
+
+	set_colors(colors,219, 28, 104);
+	led_set_color(tlc59731, 0,3, colors);
+        k_msleep(1000);
+
+	set_colors(colors,34, 219, 28);
+        led_set_color(tlc59731, 0,3, colors);
+        k_msleep(1000);
+
+	set_colors(colors,255, 128, 0);
+        led_set_color(tlc59731, 0,3, colors);
+        k_msleep(1000);
+
+}
 /**
  * @brief
  *
@@ -98,18 +124,11 @@ int main(void)
 	} else {
 		LOG_INF("Found LED device %s", tlc59731->name);
 	}
-	uint8_t colors[] = {0x30,0x0,0x1};
-	led_set_color(tlc59731, 0,3, colors);
-	int level = 0;
-	k_msleep(1000);
-	colors[0] += 0x05;
-        colors[1] += 0x05;
-        colors[2] += 0x05;
-        led_set_color(tlc59731, 0,3, colors);
-	k_msleep(1000);
+
 
 	while (1)
 	{
+		test_rgb_set_color();
 		led_on(tlc59731, RED);
 		k_msleep(500);
 		led_off(tlc59731, RED);
