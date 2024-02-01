@@ -34,6 +34,8 @@ LOG_MODULE_REGISTER(tlc59731, CONFIG_LED_LOG_LEVEL);
 #define RED		0x00
 #define GREEN		0x01
 #define BLUE		0x02
+#define ALL_LEDS	0x03
+
 #define NUM_COLORS	0x03
 
 /* Write command */
@@ -123,12 +125,21 @@ static inline int32_t rgb_fill_latch(struct tlc59731_data * rgb_lt, const uint8_
 		case(RED):
 			rgb_lt->r = value;
 			break;
+
 		case(GREEN):
 			rgb_lt->g = value;
 			break;
+
 		case(BLUE):
 			rgb_lt->b = value;
 			break;
+
+		case(ALL_LEDS):
+			rgb_lt->r = value;
+			rgb_lt->g = value;
+			rgb_lt->b = value;
+			break;
+
 		default:
 			LOG_ERR("Illegal RGB number/value");
 			err =-EINVAL;
@@ -179,7 +190,8 @@ static int tlc59731_led_set_brightness(const struct device *dev, const uint32_t 
 		LOG_ERR("%s: Illegal brighness value %d. It must be between %d<= Brightness <= %d",
 				dev->name, err, led_datas->min_brightness, led_datas->max_brightness);
 	}
-	err = tlc59731_latch_and_write(dev, led, value);
+
+	err = tlc59731_latch_and_write(dev, ALL_LEDS, value);
 	if(err)
 	{
 		LOG_ERR("%s: RGB write error: %d", dev->name, err);
@@ -227,10 +239,10 @@ static int32_t tlc59731_led_blink(const struct device *dev, uint32_t led,
 	const struct led_data *led_datas = &tlc_conf->led_datas;
 
 	if((led_datas->min_period)
-		&& (led_datas->max_period))
+			&& (led_datas->max_period))
 	{
 		if((delay_on < led_datas->min_period)
-			||	 (delay_on > led_datas->max_period))
+				||	 (delay_on > led_datas->max_period))
 		{
 			err = -EINVAL;
 			LOG_ERR("%s: Illegal blink ON period value %d."
@@ -240,7 +252,7 @@ static int32_t tlc59731_led_blink(const struct device *dev, uint32_t led,
 		}
 
 		if((delay_off < led_datas->min_period)
-			|| (delay_off > led_datas->max_period))
+				|| (delay_off > led_datas->max_period))
 		{
 			err = -EINVAL;
 			LOG_ERR("%s: Illegal blink OFF period value %d."
@@ -260,17 +272,17 @@ scape:
 }
 
 static int32_t tlc59731_led_set_color(const struct device *dev, uint32_t led,
-				 uint8_t num_colors, const uint8_t *color)
+		uint8_t num_colors, const uint8_t *color)
 {
 	int err = 0;
 	const struct tlc59731_cfg  *tlc_conf = dev->config;
-        const struct led_data *led_datas = &tlc_conf->led_datas;
+	const struct led_data *led_datas = &tlc_conf->led_datas;
 
 	if(NUM_COLORS != num_colors)
 	{
 		err = -EINVAL;
 		LOG_ERR("%s: Invalid number of color arguments: %d != 3",
-			dev->name, num_colors);
+				dev->name, num_colors);
 		goto scape;
 	}
 
@@ -280,10 +292,28 @@ static int32_t tlc59731_led_set_color(const struct device *dev, uint32_t led,
 		LOG_ERR("%s: Invalid color arguments", dev->name);
 		goto scape;
 	}
-
+#if 0
 	tlc59731_led_set_brightness(dev, RED, color[RED]);
-        tlc59731_led_set_brightness(dev, GREEN, color[GREEN]);
-        tlc59731_led_set_brightness(dev, BLUE, color[BLUE]);
+	tlc59731_led_set_brightness(dev, GREEN, color[GREEN]);
+	tlc59731_led_set_brightness(dev, BLUE, color[BLUE]);
+#endif
+	err = tlc59731_latch_and_write(dev, RED, color[RED]);
+	if(err)
+	{
+		LOG_ERR("%s: RGB write error: %d", dev->name, err);
+	}
+
+	err = tlc59731_latch_and_write(dev, GREEN, color[GREEN]);
+	if(err)
+	{
+		LOG_ERR("%s: RGB write error: %d", dev->name, err);
+	}
+
+	err = tlc59731_latch_and_write(dev, BLUE, color[BLUE]);
+	if(err)
+	{
+		LOG_ERR("%s: RGB write error: %d", dev->name, err);
+	}
 
 scape:
 	return err;

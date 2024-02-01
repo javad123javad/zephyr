@@ -98,9 +98,15 @@ int main(void)
 	} else {
 		LOG_INF("Found LED device %s", tlc59731->name);
 	}
-	uint8_t colors[] = {0x15,0x22,0x3};
+	uint8_t colors[] = {0x30,0x0,0x1};
 	led_set_color(tlc59731, 0,3, colors);
-	
+	int level = 0;
+	k_msleep(1000);
+	colors[0] += 0x05;
+        colors[1] += 0x05;
+        colors[2] += 0x05;
+        led_set_color(tlc59731, 0,3, colors);
+	k_msleep(1000);
 
 	while (1)
 	{
@@ -130,7 +136,6 @@ int main(void)
 		led_blink(tlc59731, RED, 500, 1500);
 		led_blink(tlc59731, GREEN, 500, 500);
 		led_blink(tlc59731, BLUE, 500, 500);
-
 		test_rgb_brightness();
 	}
 
