@@ -27,7 +27,6 @@ LOG_MODULE_REGISTER(tlc59731_,LOG_LEVEL_DBG);
 #define eos_length 70
 
 /* The devicetree node identifier for the "led0" alias. */
-#define LED0_NODE DT_ALIAS(led0)
 #define LED0_CS_NODE DT_ALIAS(led0cs)
 #define LED_CNTRL DT_ALIAS(rgblld)
 
@@ -43,34 +42,32 @@ static const struct gpio_dt_spec led_cs = GPIO_DT_SPEC_GET(LED0_CS_NODE, gpios);
  */
 int test_rgb_brightness(void)
 {
-    int fret = 0;
-    uint8_t rgb = 0;
-    uint8_t level = 0;
+	int fret = 0;
+	uint8_t rgb = 0;
+	uint8_t level = 0;
 
-    while (rgb<3)
-    {
-
-
-        while (level < 0xFF)
-        {
-            led_set_brightness(tlc59731, rgb, level++);
-            k_msleep(4);
-        }
-
-        k_msleep(200);
-        while (level>0)
-        {
-            led_set_brightness(tlc59731, rgb, level--);
-            k_msleep(4);
-        }
-
-        rgb++;
-        level = 0x00;
-    }
+	while (rgb<3)
+	{
 
 
+		while (level < 0xFF)
+		{
+			led_set_brightness(tlc59731, rgb, level++);
+			k_msleep(4);
+		}
 
-    return fret;
+		k_msleep(200);
+		while (level>0)
+		{
+			led_set_brightness(tlc59731, rgb, level--);
+			k_msleep(4);
+		}
+
+		rgb++;
+		level = 0x00;
+	}
+
+	return fret;
 }
 /**
  * @brief
@@ -79,62 +76,63 @@ int test_rgb_brightness(void)
  */
 int main(void)
 {
-    int fret = gpio_pin_configure_dt(&led_cs, GPIO_OUTPUT_ACTIVE);
-    if (fret < 0) {
-        printf("Error conf CS pin\r\n");
-        return fret;
-    }
+	int fret = gpio_pin_configure_dt(&led_cs, GPIO_OUTPUT_ACTIVE);
+	if (fret < 0) {
+		printf("Error conf CS pin\r\n");
+		return fret;
+	}
 
-    /* Enable RGB chip select */
-    fret = gpio_pin_set_dt(&led_cs, HIGH);
-    if(fret < 0)
-    {
-        return fret;
-    }
-    k_msleep(5);
+	/* Enable RGB chip select */
+	fret = gpio_pin_set_dt(&led_cs, HIGH);
+	if(fret < 0)
+	{
+		return fret;
+	}
+	k_msleep(5);
 
-    if (tlc59731) {
-        LOG_DBG("Found LED controller %s", tlc59731->name);
-    } else if (!device_is_ready(tlc59731)) {
-        LOG_ERR("LED device %s is not ready", tlc59731->name);
-        return 0;
-    } else {
-        LOG_INF("Found LED device %s", tlc59731->name);
-    }
-    while (1)
-    {
-#if 0
-        led_on(tlc59731, RED);
-	k_msleep(500);
-	led_off(tlc59731, RED);
-        k_msleep(500);
+	if (tlc59731) {
+		LOG_DBG("Found LED controller %s", tlc59731->name);
+	} else if (!device_is_ready(tlc59731)) {
+		LOG_ERR("LED device %s is not ready", tlc59731->name);
+		return 0;
+	} else {
+		LOG_INF("Found LED device %s", tlc59731->name);
+	}
+	uint8_t colors[] = {0x15,0x22,0x3};
+	led_set_color(tlc59731, 0,3, colors);
+	
 
-
-        led_on(tlc59731,RED);
-        k_msleep(500);
-        led_on(tlc59731,GREEN);
-        k_msleep(500);
-        led_on(tlc59731,BLUE);
-        k_msleep(500);
-        led_off(tlc59731,RED);
-        k_msleep(500);
-        led_off(tlc59731,GREEN);
-        k_msleep(500);
-        led_off(tlc59731,BLUE);
-        led_on(tlc59731,RED);
-        led_on(tlc59731,GREEN);
-        k_msleep(500);
-        led_off(tlc59731,RED);
-        k_msleep(500);
-#endif
-
-        led_blink(tlc59731, RED, 500, 1500);
-        led_blink(tlc59731, GREEN, 500, 500);
-        led_blink(tlc59731, BLUE, 500, 500);
-
-        test_rgb_brightness();
-    }
+	while (1)
+	{
+		led_on(tlc59731, RED);
+		k_msleep(500);
+		led_off(tlc59731, RED);
+		k_msleep(500);
 
 
-    return 0;
+		led_on(tlc59731,RED);
+		k_msleep(500);
+		led_on(tlc59731,GREEN);
+		k_msleep(500);
+		led_on(tlc59731,BLUE);
+		k_msleep(500);
+		led_off(tlc59731,RED);
+		k_msleep(500);
+		led_off(tlc59731,GREEN);
+		k_msleep(500);
+		led_off(tlc59731,BLUE);
+		led_on(tlc59731,RED);
+		led_on(tlc59731,GREEN);
+		k_msleep(500);
+		led_off(tlc59731,RED);
+		k_msleep(500);
+
+		led_blink(tlc59731, RED, 500, 1500);
+		led_blink(tlc59731, GREEN, 500, 500);
+		led_blink(tlc59731, BLUE, 500, 500);
+
+		test_rgb_brightness();
+	}
+
+	return 0;
 }

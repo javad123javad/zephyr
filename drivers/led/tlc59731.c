@@ -10,6 +10,7 @@
  * @file
  * @brief LED driver for the TLC59731 I2C LED driver
  */
+
 #include <zephyr/drivers/led.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/device.h>
@@ -33,6 +34,7 @@ LOG_MODULE_REGISTER(tlc59731, CONFIG_LED_LOG_LEVEL);
 #define RED		0x00
 #define GREEN		0x01
 #define BLUE		0x02
+#define NUM_COLORS	0x03
 
 /* Write command */
 #define WR		0x3A
@@ -257,6 +259,36 @@ scape:
 	return err;
 }
 
+static int32_t tlc59731_led_set_color(const struct device *dev, uint32_t led,
+				 uint8_t num_colors, const uint8_t *color)
+{
+	int err = 0;
+	const struct tlc59731_cfg  *tlc_conf = dev->config;
+        const struct led_data *led_datas = &tlc_conf->led_datas;
+
+	if(NUM_COLORS != num_colors)
+	{
+		err = -EINVAL;
+		LOG_ERR("%s: Invalid number of color arguments: %d != 3",
+			dev->name, num_colors);
+		goto scape;
+	}
+
+	if(NULL == color)
+	{
+		err = -EINVAL;
+		LOG_ERR("%s: Invalid color arguments", dev->name);
+		goto scape;
+	}
+
+	tlc59731_led_set_brightness(dev, RED, color[RED]);
+        tlc59731_led_set_brightness(dev, GREEN, color[GREEN]);
+        tlc59731_led_set_brightness(dev, BLUE, color[BLUE]);
+
+scape:
+	return err;
+
+}
 static int tlc59731_led_init(const struct device *dev)
 {
 	const struct tlc59731_cfg  *tlc_conf = dev->config;
@@ -300,6 +332,7 @@ static int tlc59731_led_init(const struct device *dev)
 static const struct led_driver_api tlc59731_led_api = {
 	.blink = tlc59731_led_blink,
 	.set_brightness = tlc59731_led_set_brightness,
+	.set_color = tlc59731_led_set_color,
 	.on = tlc59731_led_on,
 	.off = tlc59731_led_off,
 };
