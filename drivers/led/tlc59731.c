@@ -20,202 +20,280 @@ LOG_MODULE_REGISTER(tlc59731, CONFIG_LED_LOG_LEVEL);
 
 #include "led_context.h"
 
-#define DELAY           1//us
-#define T_CYCLE_0       4//us
-#define T_CYCLE_1       1//us
-#define HIGH            1
-#define LOW             0
-#define ON		0xFF
-#define OFF		0x00
+/* Pulse timing */
+#define DELAY           0x01//us
+#define T_CYCLE_0       0x04//us
+#define T_CYCLE_1       0x01//us
 
+/* Threshould levels */
+#define HIGH            0x01
+#define LOW             0x00
+
+/* RGB LED constants */
+#define RED		0x00
+#define GREEN		0x01
+#define BLUE		0x02
+
+/* Write command */
+#define WR		0x3A
 
 struct tlc59731_cfg {
-	struct gpio_dt_spec sdi_gpio;
+	struct gpio_dt_spec 	sdi_gpio;
+	struct led_data		led_datas;
 };
 
 struct tlc59731_data {
 	uint8_t	r;
 	uint8_t	g;
 	uint8_t b;
-}rgb_latch;
+};
 
 /*****************************/
-static inline int rgb_pulse(const struct gpio_dt_spec * led_dev)
+static inline int32_t rgb_pulse(const struct gpio_dt_spec * led_dev)
 {
-    int32_t fret = 0;
+	int32_t fret = 0;
 
-    fret = gpio_pin_set_dt(led_dev, HIGH);
-    if(0 != fret)
-    {
-        return fret;
-    }
+	fret = gpio_pin_set_dt(led_dev, HIGH);
+	if(0 != fret)
+	{
+		return fret;
+	}
 
-    fret = gpio_pin_set_dt(led_dev, LOW);
-    if(0 != fret)
-    {
-        return fret;
-    }
+	fret = gpio_pin_set_dt(led_dev, LOW);
+	if(0 != fret)
+	{
+		return fret;
+	}
 
-    return fret;
+	return fret;
 }
 
-static int rgb_write_bit(const struct gpio_dt_spec * led_dev, int8_t data)
+static int32_t rgb_write_bit(const struct gpio_dt_spec * led_dev, int8_t data)
 {
-    int err = 0;
-    rgb_pulse(led_dev);
+	int32_t err = 0;
 
-    k_busy_wait(DELAY);
+	rgb_pulse(led_dev);
 
-    if(data)
-    {
-        rgb_pulse(led_dev);
-        k_busy_wait(T_CYCLE_1);
-    }
-    else
-    {
-        k_busy_wait(T_CYCLE_0);
+	k_busy_wait(DELAY);
 
-    }
+	if(data)
+	{
+		rgb_pulse(led_dev);
+		k_busy_wait(T_CYCLE_1);
+	}
+	else
+	{
+		k_busy_wait(T_CYCLE_0);
 
-    return err;
+	}
+
+	return err;
 }
 
-static int rgb_write_data(const struct gpio_dt_spec * led_dev, uint8_t data )
+static int32_t rgb_write_data(const struct gpio_dt_spec * led_dev, uint8_t data )
 {
-    rgb_write_bit(led_dev, data & (1<<7));
-    rgb_write_bit(led_dev, data & (1<<6));
-    rgb_write_bit(led_dev, data & (1<<5));
-    rgb_write_bit(led_dev, data & (1<<4));
-    rgb_write_bit(led_dev, data & (1<<3));
-    rgb_write_bit(led_dev, data & (1<<2));
-    rgb_write_bit(led_dev, data & (1<<1));
-    rgb_write_bit(led_dev, data & (1<<0));
 
-    return 0;
+	int8_t idx = 7;
+	while(idx >=0)
+	{
+		rgb_write_bit(led_dev, data & BIT((idx--)));
+	}
+	return 0;
 }
 
-static int rgb_write_led(const struct gpio_dt_spec * led_dev, struct tlc59731_data * rgb_data, bool latch)
+static int32_t rgb_write_led(const struct gpio_dt_spec * led_dev, struct tlc59731_data * rgb_data)
 {
-    rgb_write_data(led_dev, 0x3A);//0x3A;write command
-    rgb_write_data(led_dev, rgb_data->r);
-    rgb_write_data(led_dev, rgb_data->g);
-    rgb_write_data(led_dev, rgb_data->b);
-#if 0
-    if(latch)
-    {
-        rgb_latch();
-    }
-    else
-    {
-        rgb_eos();
-    }
-#endif
+	rgb_write_data(led_dev, WR);//write command
+	rgb_write_data(led_dev, rgb_data->r);
+	rgb_write_data(led_dev, rgb_data->g);
+	rgb_write_data(led_dev, rgb_data->b);
 
-    return 0;
+	return 0;
 
 }
 
-static inline void rgb_fill_latch(struct tlc59731_data * rgb_lt, const uint8_t led, const uint8_t value)
+static inline int32_t rgb_fill_latch(struct tlc59731_data * rgb_lt, const uint8_t led, const uint8_t value)
 {
+	int32_t err = 0;
+
 	switch(led)
-        {
-                case(0):
-                        rgb_lt->r = value;
-                        break;
-                case(1):
-                        rgb_lt->g = value;
-                        break;
-                case(2):
-                        rgb_lt->b = value;
-                        break;
-                default:
+	{
+		case(RED):
+			rgb_lt->r = value;
+			break;
+		case(GREEN):
+			rgb_lt->g = value;
+			break;
+		case(BLUE):
+			rgb_lt->b = value;
+			break;
+		default:
 			LOG_ERR("Illegal RGB number/value");
-                        break;
-        }
+			err =-EINVAL;
+			break;
+	}
+
+	return err;
+}
+
+static int32_t tlc59731_latch_and_write(const struct device *dev, const uint8_t led, const uint16_t nval)
+{
+	int32_t err = 0;
+	const struct tlc59731_cfg  *tlc_conf = dev->config;
+	const struct gpio_dt_spec *led_gpio = &tlc_conf->sdi_gpio;
+	struct tlc59731_data *rgb_latch = dev->data;
+
+	/* First change latch data */
+	err = rgb_fill_latch(rgb_latch, led, nval);
+	if(err)
+	{
+		LOG_ERR("%s: GPIO latch error", dev->name);
+		goto scape;
+	}
+	/* Then let it go */
+	err = rgb_write_led(led_gpio, rgb_latch);
+	if(err)
+	{
+		LOG_ERR("%s: GPIO write error", dev->name);
+	}
+scape:
+	return err;
 
 
 }
 /**********************************/
 
-static int tlc59731_led_set_brightness(const struct device *dev, uint32_t led,
-		uint8_t value)
+static int tlc59731_led_set_brightness(const struct device *dev, const uint32_t led,
+		const uint8_t value)
 {
+	int err = 0;
 	const struct tlc59731_cfg  *tlc_conf = dev->config;
-        const struct gpio_dt_spec *led_gpio = &tlc_conf->sdi_gpio;
-        int err = 0;
-	
-	rgb_fill_latch(&rgb_latch, led, value);
-	rgb_write_led(led_gpio, &rgb_latch, false);
-	
-	return err;
-}
+	const struct led_data *led_datas = &tlc_conf->led_datas;
 
-static inline int tlc59731_led_on(const struct device *dev, uint32_t led)
-{
-	const struct tlc59731_cfg  *tlc_conf = dev->config;
-        const struct gpio_dt_spec *led_gpio = &tlc_conf->sdi_gpio;
-        int err = 0;
-	
-        rgb_fill_latch(&rgb_latch, led, ON);
-	rgb_write_led(led_gpio, &rgb_latch, false);
-
-	return err;
-}
-
-static inline int tlc59731_led_off(const struct device *dev, uint32_t led)
-{
-	const struct tlc59731_cfg  *tlc_conf = dev->config;
-        const struct gpio_dt_spec *led_gpio = &tlc_conf->sdi_gpio;
-        int err = 0;
-	
-        rgb_fill_latch(&rgb_latch, led, OFF);
-        rgb_write_led(led_gpio, &rgb_latch,false);
+	if((value < led_datas->min_brightness)
+			|| (value > led_datas->max_brightness))
+	{
+		err = -EINVAL;
+		LOG_ERR("%s: Illegal brighness value %d. It must be between %d<= Brightness <= %d",
+				dev->name, err, led_datas->min_brightness, led_datas->max_brightness);
+	}
+	err = tlc59731_latch_and_write(dev, led, value);
+	if(err)
+	{
+		LOG_ERR("%s: RGB write error: %d", dev->name, err);
+	}
 
 	return err;
 }
 
-static int tlc59731_led_blink(const struct device *dev, uint32_t led,
-                uint32_t delay_on, uint32_t delay_off)
+static inline int32_t tlc59731_led_on(const struct device *dev, uint32_t led)
 {
+	int32_t err = 0;
+	const struct tlc59731_cfg  *tlc_conf = dev->config;
+	const struct led_data *led_datas = &tlc_conf->led_datas;
+
+	err = tlc59731_latch_and_write(dev, led, led_datas->max_brightness);
+	if(err)
+	{
+		LOG_ERR("%s: RGB write error: %d", dev->name, err);
+	}
+
+	return err;
+}
+
+static inline int32_t tlc59731_led_off(const struct device *dev, uint32_t led)
+{
+	int32_t err = 0;
+	const struct tlc59731_cfg  *tlc_conf = dev->config;
+	const struct led_data *led_datas = &tlc_conf->led_datas;
+
+
+	err = tlc59731_latch_and_write(dev, led, led_datas->min_brightness);
+	if(err)
+	{
+		LOG_ERR("%s: RGB write error: %d", dev->name, err);
+	}
+
+	return err;
+}
+
+static int32_t tlc59731_led_blink(const struct device *dev, uint32_t led,
+		uint32_t delay_on, uint32_t delay_off)
+{
+	int32_t err = 0;
+	const struct tlc59731_cfg  *tlc_conf = dev->config;
+	const struct led_data *led_datas = &tlc_conf->led_datas;
+
+	if((led_datas->min_period)
+		&& (led_datas->max_period))
+	{
+		if((delay_on < led_datas->min_period)
+			||	 (delay_on > led_datas->max_period))
+		{
+			err = -EINVAL;
+			LOG_ERR("%s: Illegal blink ON period value %d."
+					"It must be between %d<= period(ms) <= %d",
+					dev->name,err, led_datas->min_period, led_datas->max_period);
+			goto scape;
+		}
+
+		if((delay_off < led_datas->min_period)
+			|| (delay_off > led_datas->max_period))
+		{
+			err = -EINVAL;
+			LOG_ERR("%s: Illegal blink OFF period value %d."
+					"It must be between %d<= period(ms) <= %d",
+					dev->name, delay_off, led_datas->min_period, led_datas->max_period);
+			goto scape;
+		}
+	}
+
+
 	tlc59731_led_on(dev, led);
-        k_msleep(delay_on);
-        tlc59731_led_off(dev, led);
-        k_msleep(delay_off);
-
-
-        return 0;
+	k_msleep(delay_on);
+	tlc59731_led_off(dev, led);
+	k_msleep(delay_off);
+scape:
+	return err;
 }
 
 static int tlc59731_led_init(const struct device *dev)
 {
 	const struct tlc59731_cfg  *tlc_conf = dev->config;
 	const struct gpio_dt_spec *led = &tlc_conf->sdi_gpio;
+	const struct led_data *led_datas = &tlc_conf->led_datas;
 	int err = 0;
 
-	if (!device_is_ready(led->port)) 
+	if (!device_is_ready(led->port))
 	{
 		LOG_ERR("%s: no LEDs found (DT child nodes missing)", dev->name);
-        	err = -ENODEV;
-    	}
+		err = -ENODEV;
+	}
+	LOG_ERR("%s: Min/Max Brightness: %d/%d. Min/Max Period: %d/%d",
+			dev->name,
+			led_datas->min_brightness,
+			led_datas->max_brightness,
+			led_datas->min_period,
+			led_datas->max_period);
 
 	err = gpio_pin_configure_dt(led, GPIO_OUTPUT_ACTIVE);
 	if (err < 0) {
-        	LOG_ERR("%s: no LEDs found (DT child nodes missing)", dev->name);
+		LOG_ERR("%s: Unable to setup SDI port", dev->name);
 
-        	err = -EIO;
-    	}
+		err = -EIO;
+	}
 
 	err = gpio_pin_set_dt(led, LOW);
-    	if(err < 0)
-    	{
+	if(err < 0)
+	{
 		LOG_ERR("%s: Unable to set the SDI-GPIO)", dev->name);
-        	err = -EIO;
-    	}
+		err = -EIO;
+	}
 	gpio_pin_set_dt(led, HIGH);
-    	gpio_pin_set_dt(led, LOW);
-	
-	k_busy_wait((DELAY + T_CYCLE_0 ));	
-	
+	gpio_pin_set_dt(led, LOW);
+
+	k_busy_wait((DELAY + T_CYCLE_0 ));
+
 	return err;
 }
 
@@ -227,14 +305,18 @@ static const struct led_driver_api tlc59731_led_api = {
 };
 
 #define TLC59731_DEVICE(i)                                      \
-static struct tlc59731_cfg tlc59731_cfg_##i = {			\
-        .sdi_gpio =  GPIO_DT_SPEC_INST_GET(i, gpios),		\
-};                                                              \
-								\
-DEVICE_DT_INST_DEFINE(i, &tlc59731_led_init, NULL,              \
-                      NULL, &tlc59731_cfg_##i,               	\
-                      POST_KERNEL, CONFIG_LED_INIT_PRIORITY,	\
-                      &tlc59731_led_api);			\
+	static struct tlc59731_cfg tlc59731_cfg_##i = {			\
+		.sdi_gpio =  GPIO_DT_SPEC_INST_GET(i, gpios),		\
+		.led_datas.min_period = DT_INST_PROP_OR(i, min_period, 0x00),\
+		.led_datas.max_period = DT_INST_PROP_OR(i, max_period, 0x00),\
+		.led_datas.min_brightness = DT_INST_PROP_OR(i, min_brightness, 0x00),\
+		.led_datas.max_brightness = DT_INST_PROP_OR(i, max_brightness,0xFF),\
+	};                                                              \
+	struct tlc59731_data data_##i;					\
+	DEVICE_DT_INST_DEFINE(i, &tlc59731_led_init, NULL,              \
+			&data_##i, &tlc59731_cfg_##i,            	\
+			POST_KERNEL, CONFIG_LED_INIT_PRIORITY,	\
+			&tlc59731_led_api);			\
 
 
 DT_INST_FOREACH_STATUS_OKAY(TLC59731_DEVICE)

@@ -103,6 +103,13 @@ int main(void)
     }
     while (1)
     {
+#if 0
+        led_on(tlc59731, RED);
+	k_msleep(500);
+	led_off(tlc59731, RED);
+        k_msleep(500);
+
+
         led_on(tlc59731,RED);
         k_msleep(500);
         led_on(tlc59731,GREEN);
@@ -119,15 +126,13 @@ int main(void)
         k_msleep(500);
         led_off(tlc59731,RED);
         k_msleep(500);
+#endif
 
-
-        led_blink(tlc59731, RED, 500, 500);
+        led_blink(tlc59731, RED, 500, 1500);
         led_blink(tlc59731, GREEN, 500, 500);
         led_blink(tlc59731, BLUE, 500, 500);
 
         test_rgb_brightness();
-
-
     }
 
 

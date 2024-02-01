@@ -4,18 +4,34 @@
 compatible: "ti,tlc59731"
 description: TLC59731 RGB LED Controller
 
-  #child-binding:
-  # include: ["led-controller.yaml"]
 properties:
-  enable-gpios:
-    type: phandle-array
-    description: |
-      GPIO to use to enable/disable the controller.
   gpios:
     required: true
     type: phandle-array
     description: |
       GPIO to send command data to the controller.
+  min_period:
+    type: int
+    default: 0
+    description: |
+      Minimum acceptable LED blinking time period (in ms).
+      Zero means user-defined in the application code.
+  max_period:
+    type: int
+    default: 0
+    description: |
+      Maximum acceptable LED blinking time period (in ms).
+      Zero means user-defined in the application code.
+  min_brightness:
+    type: int
+    default: 0
+    description: |
+      Minimum acceptable LED brightness value.
+  max_brightness:
+    type: int
+    default: 255
+    description: |
+      Maximum acceptable LED brightness value.
   label:
     type: string
     description: |

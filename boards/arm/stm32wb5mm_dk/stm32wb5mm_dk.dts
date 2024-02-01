@@ -46,6 +46,10 @@
 	rgb_leds:rgb_leds {
 		compatible = "ti,tlc59731";
 		gpios = <&gpioa 7 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
+		min_period = <10>;
+		max_period = <15555500>;
+		min_brightness = <0>;
+		max_brightness = <0xFF>;
 		label = "RGB LED";
 		status = "okay";
 	};
