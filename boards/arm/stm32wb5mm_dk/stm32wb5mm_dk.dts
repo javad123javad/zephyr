@@ -21,20 +21,10 @@
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
 		zephyr,code-partition = &slot0_partition;
-		zephyr,flash-controller = &s25fl128s;
 	};
 
 	leds {
                 compatible = "gpio-leds";
-                rgb_led: led_1 {
-                        gpios = <&gpioa 7 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
-                        label = "RGB_LED";
-                };
-
-		rgb_cs: rgb_cs {
-			gpios = <&gpioh 1 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
-			label = "RGB_LED_CS";
-		};
 
 		ir_led: ir_led1 {
 			gpios = <&gpiob 9 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
@@ -47,40 +37,21 @@
 		compatible = "ti,tlc59731";
 		gpios = <&gpioa 7 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
 		min_period = <10>;
-		max_period = <15555500>;
+		max_period = <1500>;
 		min_brightness = <0>;
 		max_brightness = <0xFF>;
 		label = "RGB LED";
 		status = "okay";
 	};
 
-	gpio_keys {
-                compatible = "gpio-keys";
-                button1: button1 {
-                        label = "User BT1";
-                        gpios = <&gpioc 12 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
-                        zephyr,code = <INPUT_KEY_0>;
-                };
-                button2: button2 {
-                        label = "User BT2";
-                        gpios = <&gpioc 13 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
-                        zephyr,code = <INPUT_KEY_1>;
-                };
-
-	};
+};
 
 	aliases {
 		watchdog0 = &iwdg;
 		die-temp0 = &die_temp;
 		volt-sensor0 = &vref;
 		volt-sensor1 = &vbat;
-		sw0 = &button1;
-                sw1 = &button2;
-		spi-flash0= &s25fl128s;
-		accel0 =&ism330dhcx;
-		led0 = &rgb_led;
-		led0cs= &rgb_cs;
-		rgblld= &rgb_leds;
+		rgb-led = &rgb_leds;
 	};
 };
 
@@ -201,41 +172,6 @@ zephyr_udc0: &usb {
 	status = "okay";
 };
 
-&quadspi {
-        pinctrl-0 = <&quadspi_clk_pa3 &quadspi_bk1_ncs_pd3
-			&quadspi_bk1_io0_pb9 &quadspi_bk1_io1_pd5
-			&quadspi_bk1_io2_pd6 &quadspi_bk1_io3_pd7 >;
-        pinctrl-names = "default";
-	//flash-id=<1>;
-	dmas = <&dma1 2 2 0x0000>;
-        dma-names = "tx_rx";
-
-        status = "okay";
-
-	s25fl128s: qspi-nor-flash@0 {
-		compatible = "st,stm32-qspi-nor";
-                reg = <0>;
-                qspi-max-frequency = <50000000>;
-                /* 64 Megabits = 8 Megabytes */
-                size = <0x8000000>;
-                status = "okay";
-
-                partitions {
-                        compatible = "fixed-partitions";
-                        #address-cells = <1>;
-                        #size-cells = <1>;
-
-                        slot2_partition: partition@0 {
-                                label = "image-01";
-                                reg = <0x00000000 DT_SIZE_K(864)>;
-                                };
-
-                };
-
-	};
-
-};
-
 &i2c3 {
         pinctrl-0 = <&i2c3_scl_pb13 &i2c3_sda_pb11>;
         pinctrl-names = "default";
@@ -247,7 +183,6 @@ zephyr_udc0: &usb {
                 drdy-gpios = <&gpiod 2 GPIO_ACTIVE_HIGH>;
 		accel-odr=<3>;
 		gyro-odr=<2>;
-
         };
 
         vl53l0x@29 {
