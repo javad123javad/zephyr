@@ -24,7 +24,6 @@ static int stts22h_i2c_read(const struct device *dev, uint8_t reg_addr, uint8_t 
 			    uint16_t len)
 {
 	const struct stts22h_config *cfg = dev->config;
-
 	return i2c_burst_read_dt(&cfg->i2c, reg_addr, value, len);
 }
 
@@ -32,7 +31,6 @@ static int stts22h_i2c_write(const struct device *dev, uint8_t reg_addr, uint8_t
 			     uint16_t len)
 {
 	const struct stts22h_config *cfg = dev->config;
-
 	return i2c_burst_write_dt(&cfg->i2c, reg_addr, value, len);
 }
 

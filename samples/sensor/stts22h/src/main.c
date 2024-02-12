@@ -66,6 +66,7 @@ static int32_t stts22h_get_temperature(int32_t * temp)
 		printk("Inavlid temp argument\n");
 		return -EINVAL;
 	}
+
 	err = i2c_write_read_dt(&dev_i2c, GET_STTS22H_REG(TEMP_H_OUT) , 1, &buf[0], 1);
 	if(err)
 	{
@@ -73,6 +74,7 @@ static int32_t stts22h_get_temperature(int32_t * temp)
 	}
 
 	err = i2c_write_read_dt(&dev_i2c, GET_STTS22H_REG(TEMP_L_OUT) , 1, &buf[1], 1);
+
 	if(err)
 	{
 		return err;
