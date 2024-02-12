@@ -27,6 +27,7 @@
 		die-temp0 = &die_temp;
 		volt-sensor0 = &vref;
 		volt-sensor1 = &vbat;
+		tmp-sensor = &temp_sensor;
 	};
 };
 
@@ -141,25 +142,27 @@ zephyr_udc0: &usb {
         pinctrl-names = "default";
         status = "okay";
         clock-frequency = <I2C_BITRATE_FAST>;
+
         ism330dhcx: ism330dhcx@6b {
                 compatible = "st,ism330dhcx";
                 reg = <0x6b>;
                 drdy-gpios = <&gpiod 2 GPIO_ACTIVE_HIGH>;
                 accel-odr=<3>;
                 gyro-odr=<2>;
-
+		status = "disabled";
         };
 
         vl53l0x@29 {
                 compatible = "st,vl53l0x";
                 reg = <0x29>;
                 xshut-gpios = <&gpioc 6 GPIO_ACTIVE_LOW>;
+		status = "disabled";
         };
 
 	temp_sensor:stts22h@38 {
-		compatible = "i2c-device";
+		compatible = "st,stts22h";
 		reg = <0x38>;
-		drdy-gpios = <&gpiod 15 GPIO_ACTIVE_HIGH>;
+		drdy-gpios = <&gpioe 1 GPIO_ACTIVE_HIGH>;
 		status = "okay";
         };
 };
