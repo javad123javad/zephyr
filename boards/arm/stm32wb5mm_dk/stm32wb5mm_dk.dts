@@ -12,6 +12,14 @@
 / {
 	model = "STMicroelectronics STM32WB5MM Discovery Development Kit";
 	compatible = "st,stm32wb5mm-dk";
+	
+	leds {
+		compatible = "gpio-leds";
+		ir_led: irled {
+			gpios = <&gpiob 9 GPIO_ACTIVE_LOW>;
+			label = "IR LED";
+                };
+	};
 
 	chosen {
 		zephyr,console = &usart1;
