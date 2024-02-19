@@ -509,6 +509,20 @@
 			interrupts = <51 0>;
 			status = "disabled";
 		};
+
+		i2s1: i2s@40015400 {
+			compatible = "st,stm32-i2s";
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0x40015400 0x400>;
+			clocks = <&rcc STM32_CLOCK_BUS_APB2 0x00001000>;
+			interrupts = <38 5>;
+			//dmas = <&dma1 2 3 0x400 0x3>;
+			dmas = <&dmamux1 1 18 (STM32_DMA_PERIPH_RX | STM32_DMA_PRIORITY_HIGH)>;
+			dma-names = "rx";
+			status = "disabled";
+                };
+
 	};
 
 	die_temp: dietemp {
