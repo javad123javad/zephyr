@@ -136,17 +136,17 @@ zephyr_udc0: &usb {
 	};
 };
 
+/*
 &i2s1 {
         status = "okay";
         pinctrl-0 = <&i2s1_ck1_pb8 &i2s1_d1_pc3>;
         pinctrl-names = "default";
-
         dmic_dev:st_dmic_dev@0 {
                 compatible = "st,mpxxdtyy";
                 reg = <0>;
         };
 };
-
+*/
 
 &vref {
 	status = "okay";
