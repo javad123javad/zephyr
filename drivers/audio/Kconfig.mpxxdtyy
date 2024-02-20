@@ -6,6 +6,8 @@ config AUDIO_MPXXDTYY
 	default y
 	depends on DT_HAS_ST_MPXXDTYY_ENABLED
 	select I2S
+	select SAI
+	select SPI
 	select HAS_STLIB
 	help
 	  Enable MPXXDTYY microphone support on the selected board
