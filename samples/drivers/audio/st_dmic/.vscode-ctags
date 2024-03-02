@@ -1,0 +1,333 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/javad/zephyrproject/zephyr/samples/drivers/audio/st_dmic/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	//
+ARM_Decimator_State	src/stm32wb5mm_dk_audio.c	/^static arm_fir_decimate_instance_q15 ARM_Decimator_State[MAX_AUDIO_IN_CHANNEL_NBR_TOTAL];$/;"	v	typeref:typename:arm_fir_decimate_instance_q15[]	file:
+AUDIO_CHANNELS_OUT	src/stm32wb5mm_dk_conf.h	/^#define AUDIO_CHANNELS_OUT /;"	d
+AUDIO_FREQUENCY_11K	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_FREQUENCY_11K /;"	d
+AUDIO_FREQUENCY_16K	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_FREQUENCY_16K /;"	d
+AUDIO_FREQUENCY_176K	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_FREQUENCY_176K /;"	d
+AUDIO_FREQUENCY_192K	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_FREQUENCY_192K /;"	d
+AUDIO_FREQUENCY_22K	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_FREQUENCY_22K /;"	d
+AUDIO_FREQUENCY_32K	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_FREQUENCY_32K /;"	d
+AUDIO_FREQUENCY_44K	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_FREQUENCY_44K /;"	d
+AUDIO_FREQUENCY_48K	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_FREQUENCY_48K /;"	d
+AUDIO_FREQUENCY_88K	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_FREQUENCY_88K /;"	d
+AUDIO_FREQUENCY_8K	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_FREQUENCY_8K /;"	d
+AUDIO_FREQUENCY_96K	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_FREQUENCY_96K /;"	d
+AUDIO_IN_BIT_DEPTH	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_BIT_DEPTH /;"	d
+AUDIO_IN_BUFFER_SIZE	src/stm32wb5mm_dk_conf.h	/^#define AUDIO_IN_BUFFER_SIZE /;"	d
+AUDIO_IN_CHANNELS	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_CHANNELS /;"	d
+AUDIO_IN_CHANNELS	src/stm32wb5mm_dk_conf.h	/^#define AUDIO_IN_CHANNELS /;"	d
+AUDIO_IN_Ctx_t	src/stm32wb5mm_dk_audio.h	/^}AUDIO_IN_Ctx_t;$/;"	t	typeref:struct:__anoncc9cb3320208
+AUDIO_IN_DIGITAL_MIC	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_DIGITAL_MIC /;"	d
+AUDIO_IN_INSTANCES_NBR	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_INSTANCES_NBR /;"	d
+AUDIO_IN_SAI_CLK_ENABLE	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAI_CLK_ENABLE(/;"	d
+AUDIO_IN_SAI_DMAx_CLK_ENABLE	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAI_DMAx_CLK_ENABLE(/;"	d
+AUDIO_IN_SAI_DMAx_MEM_DATA_SIZE	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAI_DMAx_MEM_DATA_SIZE /;"	d
+AUDIO_IN_SAI_DMAx_PERIPH_DATA_SIZE	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAI_DMAx_PERIPH_DATA_SIZE /;"	d
+AUDIO_IN_SAI_INSTANCE	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAI_INSTANCE /;"	d
+AUDIO_IN_SAI_SCK_AF	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAI_SCK_AF /;"	d
+AUDIO_IN_SAI_SCK_GPIO_CLK_ENABLE	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAI_SCK_GPIO_CLK_ENABLE(/;"	d
+AUDIO_IN_SAI_SCK_GPIO_PORT	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAI_SCK_GPIO_PORT /;"	d
+AUDIO_IN_SAI_SCK_PIN	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAI_SCK_PIN /;"	d
+AUDIO_IN_SAI_SD2_AF	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAI_SD2_AF /;"	d
+AUDIO_IN_SAI_SD2_GPIO_CLK_ENABLE	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAI_SD2_GPIO_CLK_ENABLE(/;"	d
+AUDIO_IN_SAI_SD2_GPIO_PORT	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAI_SD2_GPIO_PORT /;"	d
+AUDIO_IN_SAI_SD2_PIN	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAI_SD2_PIN /;"	d
+AUDIO_IN_SAMPLING_FREQUENCY	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_SAMPLING_FREQUENCY /;"	d
+AUDIO_IN_SAMPLING_FREQUENCY	src/stm32wb5mm_dk_conf.h	/^#define AUDIO_IN_SAMPLING_FREQUENCY /;"	d
+AUDIO_IN_STATE_PAUSE	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_STATE_PAUSE /;"	d
+AUDIO_IN_STATE_RECORDING	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_STATE_RECORDING /;"	d
+AUDIO_IN_STATE_RESET	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_STATE_RESET /;"	d
+AUDIO_IN_STATE_STOP	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_IN_STATE_STOP /;"	d
+AUDIO_OUT_SAMPLING_FREQUENCY	src/stm32wb5mm_dk_conf.h	/^#define AUDIO_OUT_SAMPLING_FREQUENCY /;"	d
+AUDIO_RESOLUTION_16b	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_RESOLUTION_16b /;"	d
+AUDIO_RESOLUTION_24b	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_RESOLUTION_24b /;"	d
+AUDIO_RESOLUTION_32b	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_RESOLUTION_32b /;"	d
+AUDIO_VOLUME_INPUT	src/stm32wb5mm_dk_audio.h	/^#define AUDIO_VOLUME_INPUT /;"	d
+AudioInCtx	src/stm32wb5mm_dk_audio.c	/^AUDIO_IN_Ctx_t                         AudioInCtx[AUDIO_IN_INSTANCES_NBR] = {0};$/;"	v	typeref:typename:AUDIO_IN_Ctx_t[]
+BSP_AUDIO_INSTANCE	src/stm32wb5mm_dk_audio.h	/^#define BSP_AUDIO_INSTANCE /;"	d
+BSP_AUDIO_IN_Cb_t	src/stm32wb5mm_dk_audio.h	/^}BSP_AUDIO_IN_Cb_t;$/;"	t	typeref:struct:__anoncc9cb3320308
+BSP_AUDIO_IN_DeInit	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_DeInit(uint32_t Instance)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_Error_CallBack	src/stm32wb5mm_dk_audio.c	/^__weak void BSP_AUDIO_IN_Error_CallBack(uint32_t Instance)$/;"	f	typeref:typename:__weak void
+BSP_AUDIO_IN_GetBitsPerSample	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_GetBitsPerSample(uint32_t Instance, uint32_t *BitsPerSample)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_GetChannelsNbr	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_GetChannelsNbr(uint32_t Instance, uint32_t *ChannelNbr)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_GetDevice	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_GetDevice(uint32_t Instance, uint32_t *Device)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_GetSampleRate	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_GetSampleRate(uint32_t Instance, uint32_t *SampleRate)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_GetState	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_GetState(uint32_t Instance, uint32_t *State)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_GetVolume	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_GetVolume(uint32_t Instance, uint32_t *Volume)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_HalfTransfer_CallBack	src/stm32wb5mm_dk_audio.c	/^__weak void BSP_AUDIO_IN_HalfTransfer_CallBack(uint32_t Instance)$/;"	f	typeref:typename:__weak void
+BSP_AUDIO_IN_IRQHandler	src/stm32wb5mm_dk_audio.c	/^void BSP_AUDIO_IN_IRQHandler(uint32_t Instance, uint32_t Device)$/;"	f	typeref:typename:void
+BSP_AUDIO_IN_IT_PRIORITY	src/stm32wb5mm_dk_audio.h	/^#define BSP_AUDIO_IN_IT_PRIORITY /;"	d
+BSP_AUDIO_IN_Init	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_Init(uint32_t Instance, BSP_AUDIO_Init_t* AudioInit)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_PDMToPCM	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_PDMToPCM(uint32_t Instance, uint16_t *PDMBuf, uint16_t *PCMBuf)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_PDMToPCM_Init	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_PDMToPCM_Init(uint32_t Instance, uint32_t AudioFreq, uint32_t ChnlNbrIn, ui/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_Pause	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_Pause(uint32_t Instance)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_Record	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_Record(uint32_t Instance, uint8_t* pBuf, uint32_t NbrOfBytes)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_RegisterMspCallbacks	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_RegisterMspCallbacks (uint32_t Instance, BSP_AUDIO_IN_Cb_t *CallBacks)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_Resume	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_Resume(uint32_t Instance)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_SetVolume	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_SetVolume(uint32_t Instance, uint32_t Volume)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_Stop	src/stm32wb5mm_dk_audio.c	/^int32_t BSP_AUDIO_IN_Stop(uint32_t Instance)$/;"	f	typeref:typename:int32_t
+BSP_AUDIO_IN_TransferComplete_CallBack	src/stm32wb5mm_dk_audio.c	/^__weak void BSP_AUDIO_IN_TransferComplete_CallBack(uint32_t Instance)$/;"	f	typeref:typename:__weak void
+BSP_AUDIO_Init_t	src/stm32wb5mm_dk_audio.h	/^}BSP_AUDIO_Init_t;$/;"	t	typeref:struct:__anoncc9cb3320108
+BSP_BUTTON_USERx_IT_PRIORITY	src/stm32wb5mm_dk_conf.h	/^#define BSP_BUTTON_USERx_IT_PRIORITY /;"	d
+BSP_COM_Cb_t	src/stm32wb5mm_dk.h	/^} BSP_COM_Cb_t;$/;"	t	typeref:struct:__anonabb782610b08
+BSP_ERROR_BUSY	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_BUSY /;"	d
+BSP_ERROR_BUS_ACKNOWLEDGE_FAILURE	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_BUS_ACKNOWLEDGE_FAILURE /;"	d
+BSP_ERROR_BUS_ARBITRATION_LOSS	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_BUS_ARBITRATION_LOSS /;"	d
+BSP_ERROR_BUS_FAILURE	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_BUS_FAILURE /;"	d
+BSP_ERROR_BUS_PROTOCOL_FAILURE	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_BUS_PROTOCOL_FAILURE /;"	d
+BSP_ERROR_BUS_TRANSACTION_FAILURE	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_BUS_TRANSACTION_FAILURE /;"	d
+BSP_ERROR_CLOCK_FAILURE	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_CLOCK_FAILURE /;"	d
+BSP_ERROR_COMPONENT_FAILURE	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_COMPONENT_FAILURE /;"	d
+BSP_ERROR_FEATURE_NOT_SUPPORTED	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_FEATURE_NOT_SUPPORTED /;"	d
+BSP_ERROR_MSP_FAILURE	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_MSP_FAILURE /;"	d
+BSP_ERROR_NONE	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_NONE /;"	d
+BSP_ERROR_NO_INIT	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_NO_INIT /;"	d
+BSP_ERROR_PERIPH_FAILURE	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_PERIPH_FAILURE /;"	d
+BSP_ERROR_UNKNOWN_COMPONENT	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_UNKNOWN_COMPONENT /;"	d
+BSP_ERROR_UNKNOWN_FAILURE	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_UNKNOWN_FAILURE /;"	d
+BSP_ERROR_WRONG_PARAM	src/stm32wb5mm_dk_errno.h	/^#define BSP_ERROR_WRONG_PARAM /;"	d
+BSP_PWM_LED_Cb_t	src/stm32wb5mm_dk.h	/^} BSP_PWM_LED_Cb_t;$/;"	t	typeref:struct:__anonabb782610208
+BUS_I2C3_FREQUENCY	src/stm32wb5mm_dk_conf.h	/^#define BUS_I2C3_FREQUENCY /;"	d
+BUTTON_MODE_EXTI	src/stm32wb5mm_dk.h	/^  BUTTON_MODE_EXTI = 1$/;"	e	enum:__anonabb782610403
+BUTTON_MODE_GPIO	src/stm32wb5mm_dk.h	/^  BUTTON_MODE_GPIO = 0,$/;"	e	enum:__anonabb782610403
+BUTTON_USER1	src/stm32wb5mm_dk.h	/^  BUTTON_USER1 = 0,$/;"	e	enum:__anonabb782610303
+BUTTON_USER1_EXTI_IRQn	src/stm32wb5mm_dk.h	/^#define BUTTON_USER1_EXTI_IRQn /;"	d
+BUTTON_USER1_EXTI_LINE	src/stm32wb5mm_dk.h	/^#define BUTTON_USER1_EXTI_LINE /;"	d
+BUTTON_USER1_GPIO_CLK_DISABLE	src/stm32wb5mm_dk.h	/^#define BUTTON_USER1_GPIO_CLK_DISABLE(/;"	d
+BUTTON_USER1_GPIO_CLK_ENABLE	src/stm32wb5mm_dk.h	/^#define BUTTON_USER1_GPIO_CLK_ENABLE(/;"	d
+BUTTON_USER1_GPIO_PORT	src/stm32wb5mm_dk.h	/^#define BUTTON_USER1_GPIO_PORT /;"	d
+BUTTON_USER1_PIN	src/stm32wb5mm_dk.h	/^#define BUTTON_USER1_PIN /;"	d
+BUTTON_USER2	src/stm32wb5mm_dk.h	/^  BUTTON_USER2$/;"	e	enum:__anonabb782610303
+BUTTON_USER2_EXTI_IRQn	src/stm32wb5mm_dk.h	/^#define BUTTON_USER2_EXTI_IRQn /;"	d
+BUTTON_USER2_EXTI_LINE	src/stm32wb5mm_dk.h	/^#define BUTTON_USER2_EXTI_LINE /;"	d
+BUTTON_USER2_GPIO_CLK_DISABLE	src/stm32wb5mm_dk.h	/^#define BUTTON_USER2_GPIO_CLK_DISABLE(/;"	d
+BUTTON_USER2_GPIO_CLK_ENABLE	src/stm32wb5mm_dk.h	/^#define BUTTON_USER2_GPIO_CLK_ENABLE(/;"	d
+BUTTON_USER2_GPIO_PORT	src/stm32wb5mm_dk.h	/^#define BUTTON_USER2_GPIO_PORT /;"	d
+BUTTON_USER2_PIN	src/stm32wb5mm_dk.h	/^#define BUTTON_USER2_PIN /;"	d
+BUTTON_USERx_GPIO_CLK_DISABLE	src/stm32wb5mm_dk.h	/^#define BUTTON_USERx_GPIO_CLK_DISABLE(/;"	d
+BUTTON_USERx_GPIO_CLK_ENABLE	src/stm32wb5mm_dk.h	/^#define BUTTON_USERx_GPIO_CLK_ENABLE(/;"	d
+BUTTONn	src/stm32wb5mm_dk.h	/^#define BUTTONn /;"	d
+BaudRate	src/stm32wb5mm_dk.h	/^  uint32_t              BaudRate;$/;"	m	struct:__anonabb782610a08	typeref:typename:uint32_t
+BitsPerSample	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    BitsPerSample;       \/* Audio IN Sample resolution     *\/$/;"	m	struct:__anoncc9cb3320208	typeref:typename:uint32_t
+BitsPerSample	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    BitsPerSample;$/;"	m	struct:__anoncc9cb3320108	typeref:typename:uint32_t
+ButtonMode_TypeDef	src/stm32wb5mm_dk.h	/^} ButtonMode_TypeDef;$/;"	t	typeref:enum:__anonabb782610403
+Button_TypeDef	src/stm32wb5mm_dk.h	/^} Button_TypeDef;$/;"	t	typeref:enum:__anonabb782610303
+CHANNEL_DEMUX_MASK	src/stm32wb5mm_dk_audio.h	/^#define CHANNEL_DEMUX_MASK /;"	d
+COM1	src/stm32wb5mm_dk.h	/^  COM1 = 0,$/;"	e	enum:__anonabb782610503
+COM1_CLK_DISABLE	src/stm32wb5mm_dk.h	/^#define COM1_CLK_DISABLE(/;"	d
+COM1_CLK_ENABLE	src/stm32wb5mm_dk.h	/^#define COM1_CLK_ENABLE(/;"	d
+COM1_RX_AF	src/stm32wb5mm_dk.h	/^#define COM1_RX_AF /;"	d
+COM1_RX_GPIO_CLK_DISABLE	src/stm32wb5mm_dk.h	/^#define COM1_RX_GPIO_CLK_DISABLE(/;"	d
+COM1_RX_GPIO_CLK_ENABLE	src/stm32wb5mm_dk.h	/^#define COM1_RX_GPIO_CLK_ENABLE(/;"	d
+COM1_RX_GPIO_PORT	src/stm32wb5mm_dk.h	/^#define COM1_RX_GPIO_PORT /;"	d
+COM1_RX_PIN	src/stm32wb5mm_dk.h	/^#define COM1_RX_PIN /;"	d
+COM1_TX_AF	src/stm32wb5mm_dk.h	/^#define COM1_TX_AF /;"	d
+COM1_TX_GPIO_CLK_DISABLE	src/stm32wb5mm_dk.h	/^#define COM1_TX_GPIO_CLK_DISABLE(/;"	d
+COM1_TX_GPIO_CLK_ENABLE	src/stm32wb5mm_dk.h	/^#define COM1_TX_GPIO_CLK_ENABLE(/;"	d
+COM1_TX_GPIO_PORT	src/stm32wb5mm_dk.h	/^#define COM1_TX_GPIO_PORT /;"	d
+COM1_TX_PIN	src/stm32wb5mm_dk.h	/^#define COM1_TX_PIN /;"	d
+COM1_UART	src/stm32wb5mm_dk.h	/^#define COM1_UART /;"	d
+COM_HWCONTROL_CTS	src/stm32wb5mm_dk.h	/^  COM_HWCONTROL_CTS     = UART_HWCONTROL_CTS,$/;"	e	enum:__anonabb782610903
+COM_HWCONTROL_NONE	src/stm32wb5mm_dk.h	/^  COM_HWCONTROL_NONE    = UART_HWCONTROL_NONE,$/;"	e	enum:__anonabb782610903
+COM_HWCONTROL_RTS	src/stm32wb5mm_dk.h	/^  COM_HWCONTROL_RTS     = UART_HWCONTROL_RTS,$/;"	e	enum:__anonabb782610903
+COM_HWCONTROL_RTS_CTS	src/stm32wb5mm_dk.h	/^  COM_HWCONTROL_RTS_CTS = UART_HWCONTROL_RTS_CTS,$/;"	e	enum:__anonabb782610903
+COM_HwFlowCtlTypeDef	src/stm32wb5mm_dk.h	/^} COM_HwFlowCtlTypeDef;$/;"	t	typeref:enum:__anonabb782610903
+COM_InitTypeDef	src/stm32wb5mm_dk.h	/^} COM_InitTypeDef;$/;"	t	typeref:struct:__anonabb782610a08
+COM_PARITY_EVEN	src/stm32wb5mm_dk.h	/^  COM_PARITY_EVEN = UART_PARITY_EVEN,$/;"	e	enum:__anonabb782610803
+COM_PARITY_NONE	src/stm32wb5mm_dk.h	/^  COM_PARITY_NONE = UART_PARITY_NONE,$/;"	e	enum:__anonabb782610803
+COM_PARITY_ODD	src/stm32wb5mm_dk.h	/^  COM_PARITY_ODD  = UART_PARITY_ODD$/;"	e	enum:__anonabb782610803
+COM_POLL_TIMEOUT	src/stm32wb5mm_dk.h	/^#define COM_POLL_TIMEOUT /;"	d
+COM_ParityTypeDef	src/stm32wb5mm_dk.h	/^} COM_ParityTypeDef;$/;"	t	typeref:enum:__anonabb782610803
+COM_STOPBITS_1	src/stm32wb5mm_dk.h	/^  COM_STOPBITS_1 = UART_STOPBITS_1,$/;"	e	enum:__anonabb782610703
+COM_STOPBITS_2	src/stm32wb5mm_dk.h	/^  COM_STOPBITS_2 = UART_STOPBITS_2$/;"	e	enum:__anonabb782610703
+COM_StopBitsTypeDef	src/stm32wb5mm_dk.h	/^} COM_StopBitsTypeDef;$/;"	t	typeref:enum:__anonabb782610703
+COM_TypeDef	src/stm32wb5mm_dk.h	/^} COM_TypeDef;$/;"	t	typeref:enum:__anonabb782610503
+COM_WORDLENGTH_7B	src/stm32wb5mm_dk.h	/^  COM_WORDLENGTH_7B = UART_WORDLENGTH_7B,$/;"	e	enum:__anonabb782610603
+COM_WORDLENGTH_8B	src/stm32wb5mm_dk.h	/^  COM_WORDLENGTH_8B = UART_WORDLENGTH_8B,$/;"	e	enum:__anonabb782610603
+COM_WORDLENGTH_9B	src/stm32wb5mm_dk.h	/^  COM_WORDLENGTH_9B = UART_WORDLENGTH_9B$/;"	e	enum:__anonabb782610603
+COM_WordLengthTypeDef	src/stm32wb5mm_dk.h	/^} COM_WordLengthTypeDef;$/;"	t	typeref:enum:__anonabb782610603
+COMn	src/stm32wb5mm_dk.h	/^  COMn$/;"	e	enum:__anonabb782610503
+COMn	src/stm32wb5mm_dk.h	/^#define COMn /;"	d
+CONFIG_ST_DMIC_STM32	Kconfig.sai	/^	config ST_DMIC_STM32$/;"	c
+ChannelsNbr	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    ChannelsNbr;         \/* Audio IN number of channel     *\/$/;"	m	struct:__anoncc9cb3320208	typeref:typename:uint32_t
+ChannelsNbr	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    ChannelsNbr;$/;"	m	struct:__anoncc9cb3320108	typeref:typename:uint32_t
+DECIMATOR_BLOCK_SIZE	src/stm32wb5mm_dk_audio.c	/^#define DECIMATOR_BLOCK_SIZE /;"	d	file:
+DECIMATOR_FACTOR	src/stm32wb5mm_dk_audio.c	/^#define DECIMATOR_FACTOR /;"	d	file:
+DECIMATOR_NUM_TAPS	src/stm32wb5mm_dk_audio.c	/^#define DECIMATOR_NUM_TAPS /;"	d	file:
+DECIMATOR_STATE_LENGTH	src/stm32wb5mm_dk_audio.c	/^#define DECIMATOR_STATE_LENGTH /;"	d	file:
+DEFAULT_AUDIO_IN_BUFFER_SIZE	src/stm32wb5mm_dk_audio.h	/^#define DEFAULT_AUDIO_IN_BUFFER_SIZE /;"	d
+DMA_MAX	src/stm32wb5mm_dk_audio.h	/^#define DMA_MAX(/;"	d
+DecimationFactor	src/stm32wb5mm_dk_audio.h	/^  uint32_t DecimationFactor;$/;"	m	struct:__anoncc9cb3320208	typeref:typename:uint32_t
+Device	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    Device;              \/* Audio IN device to be used     *\/$/;"	m	struct:__anoncc9cb3320208	typeref:typename:uint32_t
+Device	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    Device;$/;"	m	struct:__anoncc9cb3320108	typeref:typename:uint32_t
+ENABLE_HIGH_PERFORMANCE_MODE	src/stm32wb5mm_dk_audio.h	/^#define ENABLE_HIGH_PERFORMANCE_MODE /;"	d
+HAL_SAI_RxCpltCallback	src/stm32wb5mm_dk_audio.c	/^void HAL_SAI_RxCpltCallback(SAI_HandleTypeDef *hSai)$/;"	f	typeref:typename:void
+HAL_SAI_RxHalfCpltCallback	src/stm32wb5mm_dk_audio.c	/^void HAL_SAI_RxHalfCpltCallback(SAI_HandleTypeDef *hSai)$/;"	f	typeref:typename:void
+HTONS	src/stm32wb5mm_dk_audio.h	/^#define HTONS(/;"	d
+HwFlowCtl	src/stm32wb5mm_dk.h	/^  COM_HwFlowCtlTypeDef  HwFlowCtl;$/;"	m	struct:__anonabb782610a08	typeref:typename:COM_HwFlowCtlTypeDef
+IS_DCDC_SUPPORTED	src/stm32wb5mm_dk_conf.h	/^#define IS_DCDC_SUPPORTED /;"	d
+IS_TCXO_SUPPORTED	src/stm32wb5mm_dk_conf.h	/^#define IS_TCXO_SUPPORTED /;"	d
+Instance	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    Instance;            \/* Audio IN instance              *\/$/;"	m	struct:__anoncc9cb3320208	typeref:typename:uint32_t
+IsMspCallbacksValid	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    IsMspCallbacksValid; \/* Is Msp Callbacks registered     *\/$/;"	m	struct:__anoncc9cb3320208	typeref:typename:uint32_t
+MAX_AUDIO_IN_CHANNEL_NBR_PER_IF	src/stm32wb5mm_dk_conf.h	/^#define MAX_AUDIO_IN_CHANNEL_NBR_PER_IF /;"	d
+MAX_AUDIO_IN_CHANNEL_NBR_TOTAL	src/stm32wb5mm_dk_conf.h	/^#define MAX_AUDIO_IN_CHANNEL_NBR_TOTAL /;"	d
+MAX_DECIMATION_FACTOR	src/stm32wb5mm_dk_conf.h	/^#define MAX_DECIMATION_FACTOR /;"	d
+MAX_MIC_FREQ	src/stm32wb5mm_dk_conf.h	/^#define MAX_MIC_FREQ /;"	d
+MX_SAI1_Block_A_Init	src/stm32wb5mm_dk_audio.c	/^__weak HAL_StatusTypeDef MX_SAI1_Block_A_Init(SAI_HandleTypeDef* hsai,uint32_t PDM_FREQ)$/;"	f	typeref:typename:__weak HAL_StatusTypeDef
+MX_SAI_ClockConfig	src/stm32wb5mm_dk_audio.c	/^__weak HAL_StatusTypeDef MX_SAI_ClockConfig(SAI_HandleTypeDef *hsai)$/;"	f	typeref:typename:__weak HAL_StatusTypeDef
+MX_UART_InitTypeDef	src/stm32wb5mm_dk.h	/^#define MX_UART_InitTypeDef /;"	d
+N_MS_PER_INTERRUPT	src/stm32wb5mm_dk_audio.h	/^#define N_MS_PER_INTERRUPT /;"	d
+N_MS_PER_INTERRUPT	src/stm32wb5mm_dk_conf.h	/^#define N_MS_PER_INTERRUPT /;"	d
+PDM2PCM_INTERNAL_MEMORY_SIZE	src/pdm2pcm_glo.h	/^#define PDM2PCM_INTERNAL_MEMORY_SIZE /;"	d
+PDM_FILTER_BIT_ORDER_ERROR	src/pdm2pcm_glo.h	/^#define PDM_FILTER_BIT_ORDER_ERROR /;"	d
+PDM_FILTER_BIT_ORDER_LSB	src/pdm2pcm_glo.h	/^#define PDM_FILTER_BIT_ORDER_LSB /;"	d
+PDM_FILTER_BIT_ORDER_MSB	src/pdm2pcm_glo.h	/^#define PDM_FILTER_BIT_ORDER_MSB /;"	d
+PDM_FILTER_CONFIG_ERROR	src/pdm2pcm_glo.h	/^#define PDM_FILTER_CONFIG_ERROR /;"	d
+PDM_FILTER_CRC_LOCK_ERROR	src/pdm2pcm_glo.h	/^#define PDM_FILTER_CRC_LOCK_ERROR /;"	d
+PDM_FILTER_DECIMATION_ERROR	src/pdm2pcm_glo.h	/^#define PDM_FILTER_DECIMATION_ERROR /;"	d
+PDM_FILTER_DEC_FACTOR_128	src/pdm2pcm_glo.h	/^#define PDM_FILTER_DEC_FACTOR_128 /;"	d
+PDM_FILTER_DEC_FACTOR_16	src/pdm2pcm_glo.h	/^#define PDM_FILTER_DEC_FACTOR_16 /;"	d
+PDM_FILTER_DEC_FACTOR_24	src/pdm2pcm_glo.h	/^#define PDM_FILTER_DEC_FACTOR_24 /;"	d
+PDM_FILTER_DEC_FACTOR_32	src/pdm2pcm_glo.h	/^#define PDM_FILTER_DEC_FACTOR_32 /;"	d
+PDM_FILTER_DEC_FACTOR_48	src/pdm2pcm_glo.h	/^#define PDM_FILTER_DEC_FACTOR_48 /;"	d
+PDM_FILTER_DEC_FACTOR_64	src/pdm2pcm_glo.h	/^#define PDM_FILTER_DEC_FACTOR_64 /;"	d
+PDM_FILTER_DEC_FACTOR_80	src/pdm2pcm_glo.h	/^#define PDM_FILTER_DEC_FACTOR_80 /;"	d
+PDM_FILTER_ENDIANNESS_BE	src/pdm2pcm_glo.h	/^#define PDM_FILTER_ENDIANNESS_BE /;"	d
+PDM_FILTER_ENDIANNESS_ERROR	src/pdm2pcm_glo.h	/^#define PDM_FILTER_ENDIANNESS_ERROR /;"	d
+PDM_FILTER_ENDIANNESS_LE	src/pdm2pcm_glo.h	/^#define PDM_FILTER_ENDIANNESS_LE /;"	d
+PDM_FILTER_GAIN_ERROR	src/pdm2pcm_glo.h	/^#define PDM_FILTER_GAIN_ERROR /;"	d
+PDM_FILTER_INIT_ERROR	src/pdm2pcm_glo.h	/^#define PDM_FILTER_INIT_ERROR /;"	d
+PDM_FILTER_SAMPLES_NUMBER_ERROR	src/pdm2pcm_glo.h	/^#define PDM_FILTER_SAMPLES_NUMBER_ERROR /;"	d
+PDM_FREQ_16K	src/stm32wb5mm_dk_audio.h	/^#define PDM_FREQ_16K /;"	d
+PDM_FilterConfig	src/stm32wb5mm_dk_audio.c	/^static PDM_Filter_Config_t   PDM_FilterConfig[MAX_AUDIO_IN_CHANNEL_NBR_TOTAL];$/;"	v	typeref:typename:PDM_Filter_Config_t[]	file:
+PDM_FilterHandler	src/stm32wb5mm_dk_audio.c	/^static PDM_Filter_Handler_t  PDM_FilterHandler[MAX_AUDIO_IN_CHANNEL_NBR_TOTAL];$/;"	v	typeref:typename:PDM_Filter_Handler_t[]	file:
+PDM_Filter_Config_t	src/pdm2pcm_glo.h	/^}PDM_Filter_Config_t;$/;"	t	typeref:struct:__anon4ef09aa60208
+PDM_Filter_Handler_t	src/pdm2pcm_glo.h	/^}PDM_Filter_Handler_t;$/;"	t	typeref:struct:__anon4ef09aa60108
+PDM_INTERNAL_BUFFER_SIZE_SAI	src/stm32wb5mm_dk_audio.c	/^#define PDM_INTERNAL_BUFFER_SIZE_SAI /;"	d	file:
+PWM_LED_BLUE	src/stm32wb5mm_dk.h	/^  PWM_LED_BLUE,$/;"	e	enum:__anonabb782610103
+PWM_LED_CLOCK_IT_PRIORITY	src/stm32wb5mm_dk_conf.h	/^#define PWM_LED_CLOCK_IT_PRIORITY /;"	d
+PWM_LED_GREEN	src/stm32wb5mm_dk.h	/^  PWM_LED_GREEN,$/;"	e	enum:__anonabb782610103
+PWM_LED_GSDATA_0_02	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_0_02 /;"	d
+PWM_LED_GSDATA_0_05	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_0_05 /;"	d
+PWM_LED_GSDATA_0_3	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_0_3 /;"	d
+PWM_LED_GSDATA_0_6	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_0_6 /;"	d
+PWM_LED_GSDATA_0_7	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_0_7 /;"	d
+PWM_LED_GSDATA_0_9	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_0_9 /;"	d
+PWM_LED_GSDATA_18_8	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_18_8 /;"	d
+PWM_LED_GSDATA_19_2	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_19_2 /;"	d
+PWM_LED_GSDATA_19_6	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_19_6 /;"	d
+PWM_LED_GSDATA_1_1	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_1_1 /;"	d
+PWM_LED_GSDATA_1_3	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_1_3 /;"	d
+PWM_LED_GSDATA_20_0	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_20_0 /;"	d
+PWM_LED_GSDATA_20_5	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_20_5 /;"	d
+PWM_LED_GSDATA_46_1	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_46_1 /;"	d
+PWM_LED_GSDATA_46_5	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_46_5 /;"	d
+PWM_LED_GSDATA_47_0	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_47_0 /;"	d
+PWM_LED_GSDATA_5_5	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_5_5 /;"	d
+PWM_LED_GSDATA_5_7	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_5_7 /;"	d
+PWM_LED_GSDATA_6_2	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_6_2 /;"	d
+PWM_LED_GSDATA_6_6	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_6_6 /;"	d
+PWM_LED_GSDATA_7_0	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_7_0 /;"	d
+PWM_LED_GSDATA_99_1	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_99_1 /;"	d
+PWM_LED_GSDATA_99_5	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_99_5 /;"	d
+PWM_LED_GSDATA_99_9	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_99_9 /;"	d
+PWM_LED_GSDATA_OFF	src/stm32wb5mm_dk.h	/^#define PWM_LED_GSDATA_OFF /;"	d
+PWM_LED_NB	src/stm32wb5mm_dk.h	/^  PWM_LED_NB$/;"	e	enum:__anonabb782610103
+PWM_LED_RED	src/stm32wb5mm_dk.h	/^  PWM_LED_RED = 0,$/;"	e	enum:__anonabb782610103
+PWM_LED_SDI_GPIO_CLK_DISABLE	src/stm32wb5mm_dk.h	/^#define PWM_LED_SDI_GPIO_CLK_DISABLE(/;"	d
+PWM_LED_SDI_GPIO_CLK_ENABLE	src/stm32wb5mm_dk.h	/^#define PWM_LED_SDI_GPIO_CLK_ENABLE(/;"	d
+PWM_LED_SDI_GPIO_PIN	src/stm32wb5mm_dk.h	/^#define PWM_LED_SDI_GPIO_PIN /;"	d
+PWM_LED_SDI_GPIO_PORT	src/stm32wb5mm_dk.h	/^#define PWM_LED_SDI_GPIO_PORT /;"	d
+PWM_LED_SELECT_GPIO_CLK_DISABLE	src/stm32wb5mm_dk.h	/^#define PWM_LED_SELECT_GPIO_CLK_DISABLE(/;"	d
+PWM_LED_SELECT_GPIO_CLK_ENABLE	src/stm32wb5mm_dk.h	/^#define PWM_LED_SELECT_GPIO_CLK_ENABLE(/;"	d
+PWM_LED_SELECT_GPIO_PIN	src/stm32wb5mm_dk.h	/^#define PWM_LED_SELECT_GPIO_PIN /;"	d
+PWM_LED_SELECT_GPIO_PORT	src/stm32wb5mm_dk.h	/^#define PWM_LED_SELECT_GPIO_PORT /;"	d
+PWM_LED_TIM	src/stm32wb5mm_dk.h	/^#define PWM_LED_TIM /;"	d
+PWM_LED_TIM_CLOCK_DISABLE	src/stm32wb5mm_dk.h	/^#define PWM_LED_TIM_CLOCK_DISABLE(/;"	d
+PWM_LED_TIM_CLOCK_ENABLE	src/stm32wb5mm_dk.h	/^#define PWM_LED_TIM_CLOCK_ENABLE(/;"	d
+PWM_LED_TIM_COUNTER_FREQ	src/stm32wb5mm_dk.h	/^#define PWM_LED_TIM_COUNTER_FREQ /;"	d
+PWM_LED_TIM_FREQ	src/stm32wb5mm_dk.h	/^#define PWM_LED_TIM_FREQ /;"	d
+PWM_LED_TIM_GET_COUNTER_CLK_FREQ	src/stm32wb5mm_dk.h	/^#define PWM_LED_TIM_GET_COUNTER_CLK_FREQ(/;"	d
+PWM_LED_TIM_UP_IRQN	src/stm32wb5mm_dk.h	/^#define PWM_LED_TIM_UP_IRQN /;"	d
+PWM_LEDn	src/stm32wb5mm_dk.h	/^#define PWM_LEDn /;"	d
+Parity	src/stm32wb5mm_dk.h	/^  COM_ParityTypeDef     Parity;$/;"	m	struct:__anonabb782610a08	typeref:typename:COM_ParityTypeDef
+PwmLedGsData_TypeDef	src/stm32wb5mm_dk.h	/^typedef uint8_t PwmLedGsData_TypeDef;$/;"	t	typeref:typename:uint8_t
+PwmLed_TypeDef	src/stm32wb5mm_dk.h	/^} PwmLed_TypeDef;$/;"	t	typeref:enum:__anonabb782610103
+SAI_InternalBuffer	src/stm32wb5mm_dk_audio.c	/^static uint16_t SAI_InternalBuffer[PDM_INTERNAL_BUFFER_SIZE_SAI];$/;"	v	typeref:typename:uint16_t[]	file:
+SAI_MspInit	src/stm32wb5mm_dk_audio.c	/^static void SAI_MspInit(SAI_HandleTypeDef *hsai)$/;"	f	typeref:typename:void	file:
+ST-DMIC	Kconfig.sai	/^mainmenu "ST-DMIC"$/;"	M
+STM32WB5MM_DK_AUDIO_H	src/stm32wb5mm_dk_audio.h	/^#define STM32WB5MM_DK_AUDIO_H$/;"	d
+STM32WB5MM_DK_BSP_VERSION	src/stm32wb5mm_dk.h	/^#define STM32WB5MM_DK_BSP_VERSION /;"	d
+STM32WB5MM_DK_BSP_VERSION_MAIN	src/stm32wb5mm_dk.h	/^#define STM32WB5MM_DK_BSP_VERSION_MAIN /;"	d
+STM32WB5MM_DK_BSP_VERSION_RC	src/stm32wb5mm_dk.h	/^#define STM32WB5MM_DK_BSP_VERSION_RC /;"	d
+STM32WB5MM_DK_BSP_VERSION_SUB1	src/stm32wb5mm_dk.h	/^#define STM32WB5MM_DK_BSP_VERSION_SUB1 /;"	d
+STM32WB5MM_DK_BSP_VERSION_SUB2	src/stm32wb5mm_dk.h	/^#define STM32WB5MM_DK_BSP_VERSION_SUB2 /;"	d
+STM32WB5MM_DK_CONF_H	src/stm32wb5mm_dk_conf.h	/^#define STM32WB5MM_DK_CONF_H$/;"	d
+STM32WB5MM_DK_ERRNO_H	src/stm32wb5mm_dk_errno.h	/^#define STM32WB5MM_DK_ERRNO_H$/;"	d
+STM32WB5MM_DK_GetTick	src/stm32wb5mm_dk_conf.h	/^#define STM32WB5MM_DK_GetTick /;"	d
+STM32WB5MM_DK_H	src/stm32wb5mm_dk.h	/^#define STM32WB5MM_DK_H$/;"	d
+STM32WB5MM_DK_I2C_DeInit	src/stm32wb5mm_dk_conf.h	/^#define STM32WB5MM_DK_I2C_DeInit /;"	d
+STM32WB5MM_DK_I2C_Init	src/stm32wb5mm_dk_conf.h	/^#define STM32WB5MM_DK_I2C_Init /;"	d
+STM32WB5MM_DK_I2C_ReadReg	src/stm32wb5mm_dk_conf.h	/^#define STM32WB5MM_DK_I2C_ReadReg /;"	d
+STM32WB5MM_DK_I2C_WriteReg	src/stm32wb5mm_dk_conf.h	/^#define STM32WB5MM_DK_I2C_WriteReg /;"	d
+ST_DMIC_STM32	Kconfig.sai	/^	config ST_DMIC_STM32$/;"	c
+SampleRate	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    SampleRate;          \/* Audio IN Sample rate           *\/$/;"	m	struct:__anoncc9cb3320208	typeref:typename:uint32_t
+SampleRate	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    SampleRate;$/;"	m	struct:__anoncc9cb3320108	typeref:typename:uint32_t
+Size	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    Size;                \/* Audio IN record buffer size    *\/$/;"	m	struct:__anoncc9cb3320208	typeref:typename:uint32_t
+State	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    State;               \/* Audio IN State                 *\/$/;"	m	struct:__anoncc9cb3320208	typeref:typename:uint32_t
+StopBits	src/stm32wb5mm_dk.h	/^  COM_StopBitsTypeDef   StopBits;$/;"	m	struct:__anonabb782610a08	typeref:typename:COM_StopBitsTypeDef
+USE_BSP_COM_FEATURE	src/stm32wb5mm_dk_conf.h	/^#define USE_BSP_COM_FEATURE /;"	d
+USE_COM_LOG	src/stm32wb5mm_dk_conf.h	/^#define USE_COM_LOG /;"	d
+USE_ENV_SENSOR_LPS22HH_0	src/stm32wb5mm_dk_conf.h	/^#define USE_ENV_SENSOR_LPS22HH_0 /;"	d
+USE_ENV_SENSOR_STTS22H_0	src/stm32wb5mm_dk_conf.h	/^#define USE_ENV_SENSOR_STTS22H_0 /;"	d
+USE_MOTION_SENSOR_IIS2MDC_0	src/stm32wb5mm_dk_conf.h	/^#define USE_MOTION_SENSOR_IIS2MDC_0 /;"	d
+USE_MOTION_SENSOR_ISM330DHCX_0	src/stm32wb5mm_dk_conf.h	/^#define USE_MOTION_SENSOR_ISM330DHCX_0 /;"	d
+Volume	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    Volume;              \/* Audio IN volume                *\/$/;"	m	struct:__anoncc9cb3320208	typeref:typename:uint32_t
+Volume	src/stm32wb5mm_dk_audio.h	/^  uint32_t                    Volume;$/;"	m	struct:__anoncc9cb3320108	typeref:typename:uint32_t
+WordLength	src/stm32wb5mm_dk.h	/^  COM_WordLengthTypeDef WordLength;$/;"	m	struct:__anonabb782610a08	typeref:typename:COM_WordLengthTypeDef
+__PDM2PCM_FILTER_H	src/pdm2pcm_glo.h	/^#define __PDM2PCM_FILTER_H$/;"	d
+__anon4ef09aa60108	src/pdm2pcm_glo.h	/^typedef struct{$/;"	s
+__anon4ef09aa60208	src/pdm2pcm_glo.h	/^typedef struct{$/;"	s
+__anonabb782610103	src/stm32wb5mm_dk.h	/^{$/;"	g
+__anonabb782610208	src/stm32wb5mm_dk.h	/^{$/;"	s
+__anonabb782610303	src/stm32wb5mm_dk.h	/^{$/;"	g
+__anonabb782610403	src/stm32wb5mm_dk.h	/^{$/;"	g
+__anonabb782610503	src/stm32wb5mm_dk.h	/^{$/;"	g
+__anonabb782610603	src/stm32wb5mm_dk.h	/^{$/;"	g
+__anonabb782610703	src/stm32wb5mm_dk.h	/^{$/;"	g
+__anonabb782610803	src/stm32wb5mm_dk.h	/^{$/;"	g
+__anonabb782610903	src/stm32wb5mm_dk.h	/^{$/;"	g
+__anonabb782610a08	src/stm32wb5mm_dk.h	/^{$/;"	s
+__anonabb782610b08	src/stm32wb5mm_dk.h	/^{$/;"	s
+__anoncc9cb3320108	src/stm32wb5mm_dk_audio.h	/^{$/;"	s
+__anoncc9cb3320208	src/stm32wb5mm_dk_audio.h	/^{$/;"	s
+__anoncc9cb3320308	src/stm32wb5mm_dk_audio.h	/^{$/;"	s
+aPwmLedGsData_TypeDef	src/stm32wb5mm_dk.h	/^typedef PwmLedGsData_TypeDef aPwmLedGsData_TypeDef[PWM_LED_NB];$/;"	t	typeref:typename:PwmLedGsData_TypeDef[PWM_LED_NB]
+bit_order	src/pdm2pcm_glo.h	/^  uint16_t bit_order;$/;"	m	struct:__anon4ef09aa60108	typeref:typename:uint16_t
+decimation_factor	src/pdm2pcm_glo.h	/^  uint16_t decimation_factor;$/;"	m	struct:__anon4ef09aa60208	typeref:typename:uint16_t
+endianness	src/pdm2pcm_glo.h	/^  uint16_t endianness;$/;"	m	struct:__anon4ef09aa60108	typeref:typename:uint16_t
+hAudioInSai	src/stm32wb5mm_dk_audio.c	/^SAI_HandleTypeDef            hAudioInSai;$/;"	v	typeref:typename:SAI_HandleTypeDef
+high_pass_tap	src/pdm2pcm_glo.h	/^  uint32_t high_pass_tap;$/;"	m	struct:__anon4ef09aa60108	typeref:typename:uint32_t
+in_ptr_channels	src/pdm2pcm_glo.h	/^  uint16_t in_ptr_channels;$/;"	m	struct:__anon4ef09aa60108	typeref:typename:uint16_t
+main	src/main.c	/^int main(void)$/;"	f	typeref:typename:int
+mic_gain	src/pdm2pcm_glo.h	/^  int16_t  mic_gain;$/;"	m	struct:__anon4ef09aa60208	typeref:typename:int16_t
+out_ptr_channels	src/pdm2pcm_glo.h	/^  uint16_t out_ptr_channels;$/;"	m	struct:__anon4ef09aa60108	typeref:typename:uint16_t
+output_samples_number	src/pdm2pcm_glo.h	/^  uint16_t output_samples_number;$/;"	m	struct:__anon4ef09aa60208	typeref:typename:uint16_t
+pBuff	src/stm32wb5mm_dk_audio.h	/^  uint16_t                    *pBuff;              \/* Audio IN record buffer         *\/$/;"	m	struct:__anoncc9cb3320208	typeref:typename:uint16_t *
+pInternalMemory	src/pdm2pcm_glo.h	/^  uint32_t pInternalMemory[PDM2PCM_INTERNAL_MEMORY_SIZE];$/;"	m	struct:__anon4ef09aa60108	typeref:typename:uint32_t[]
+pMspDeInitCb	src/stm32wb5mm_dk.h	/^  pTIM_CallbackTypeDef  pMspDeInitCb;$/;"	m	struct:__anonabb782610208	typeref:typename:pTIM_CallbackTypeDef
+pMspDeInitCb	src/stm32wb5mm_dk.h	/^  pUART_CallbackTypeDef  pMspDeInitCb;$/;"	m	struct:__anonabb782610b08	typeref:typename:pUART_CallbackTypeDef
+pMspInitCb	src/stm32wb5mm_dk.h	/^  pTIM_CallbackTypeDef  pMspInitCb;$/;"	m	struct:__anonabb782610208	typeref:typename:pTIM_CallbackTypeDef
+pMspInitCb	src/stm32wb5mm_dk.h	/^  pUART_CallbackTypeDef  pMspInitCb;$/;"	m	struct:__anonabb782610b08	typeref:typename:pUART_CallbackTypeDef
+pMspSaiDeInitCb	src/stm32wb5mm_dk_audio.h	/^  pSAI_CallbackTypeDef            pMspSaiDeInitCb;$/;"	m	struct:__anoncc9cb3320308	typeref:typename:pSAI_CallbackTypeDef
+pMspSaiInitCb	src/stm32wb5mm_dk_audio.h	/^  pSAI_CallbackTypeDef            pMspSaiInitCb;$/;"	m	struct:__anoncc9cb3320308	typeref:typename:pSAI_CallbackTypeDef

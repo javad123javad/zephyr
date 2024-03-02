@@ -68,7 +68,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32wb5mm_dk_audio.h"
 #include "stm32wb5mm_dk_errno.h"
-//#include "arm_math.h"
+#include "arm_math.h"
 
 /** @addtogroup BSP
   * @{
@@ -115,6 +115,8 @@ static PDM_Filter_Handler_t  PDM_FilterHandler[MAX_AUDIO_IN_CHANNEL_NBR_TOTAL];
 static PDM_Filter_Config_t   PDM_FilterConfig[MAX_AUDIO_IN_CHANNEL_NBR_TOTAL];
 
 SAI_HandleTypeDef            hAudioInSai;
+DMA_HandleTypeDef hSaiDma;
+
 #define PDM_INTERNAL_BUFFER_SIZE_SAI          ((MAX_MIC_FREQ / 8) * MAX_AUDIO_IN_CHANNEL_NBR_TOTAL * N_MS_PER_INTERRUPT)
 static uint16_t SAI_InternalBuffer[PDM_INTERNAL_BUFFER_SIZE_SAI];
 
@@ -193,6 +195,7 @@ int32_t BSP_AUDIO_IN_Init(uint32_t Instance, BSP_AUDIO_Init_t* AudioInit)
       AudioInCtx[Instance].DecimationFactor = (PDM_Clock_Freq * 1000U)/AudioInit->SampleRate;
       AudioInCtx[Instance].Size = (PDM_Clock_Freq/8U) * 2U * N_MS_PER_INTERRUPT;
       /* Initialize SAI */
+
       __HAL_SAI_RESET_HANDLE_STATE(&hAudioInSai);
       /* PLL clock is set depending by the AudioFreq */ 
       if(MX_SAI_ClockConfig(&hAudioInSai) != HAL_OK)
@@ -208,10 +211,11 @@ int32_t BSP_AUDIO_IN_Init(uint32_t Instance, BSP_AUDIO_Init_t* AudioInit)
       {
         return  BSP_ERROR_PERIPH_FAILURE;
       }
-      if (BSP_AUDIO_IN_PDMToPCM_Init(Instance, AudioInCtx[0].SampleRate, AudioInCtx[0].ChannelsNbr, AudioInCtx[0].ChannelsNbr)!= BSP_ERROR_NONE)
-      {
-        return  BSP_ERROR_NO_INIT;
-      }
+
+      // if (BSP_AUDIO_IN_PDMToPCM_Init(Instance, AudioInCtx[0].SampleRate, AudioInCtx[0].ChannelsNbr, AudioInCtx[0].ChannelsNbr)!= BSP_ERROR_NONE)
+      // {
+      //   return  BSP_ERROR_NO_INIT;
+      // }
     }
     /* Update BSP AUDIO IN state */
     AudioInCtx[Instance].State = AUDIO_IN_STATE_STOP;
@@ -721,6 +725,7 @@ void BSP_AUDIO_IN_IRQHandler(uint32_t Instance, uint32_t Device)
 void HAL_SAI_RxCpltCallback(SAI_HandleTypeDef *hSai)
 {
   UNUSED(hSai);
+  printk("Data ready...\r\n");
   uint8_t * DataTempSAI = &(((uint8_t *)SAI_InternalBuffer)[AudioInCtx[0].Size/2U]);
 
   memcpy(AudioInCtx[0].pBuff, DataTempSAI, AudioInCtx[0].Size/2U);
@@ -738,6 +743,7 @@ void HAL_SAI_RxHalfCpltCallback(SAI_HandleTypeDef *hSai)
 {
   UNUSED(hSai);
   uint8_t * DataTempSAI = (uint8_t *)SAI_InternalBuffer;
+  printk("Half Data ready...\r\n");
 
   memcpy(AudioInCtx[0].pBuff, DataTempSAI, AudioInCtx[0].Size/2U);
   BSP_AUDIO_IN_HalfTransfer_CallBack(0);
@@ -803,7 +809,6 @@ Static Functions
   */
 static void SAI_MspInit(SAI_HandleTypeDef *hsai)
 {
-  static DMA_HandleTypeDef hSaiDma;
   
   GPIO_InitTypeDef  GPIO_InitStruct;
   
@@ -883,7 +888,14 @@ __weak HAL_StatusTypeDef MX_SAI_ClockConfig(SAI_HandleTypeDef *hsai)
     PeriphClkInitStruct.PLLSAI1.PLLSAI1ClockOut = RCC_PLLSAI1_SAI1CLK;
     PeriphClkInitStruct.Sai1ClockSelection = RCC_SAI1CLKSOURCE_PLLSAI1;
   }
-  if(HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK) while(1);
+
+  ret = HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
+  if( ret != HAL_OK) 
+  {
+    printk("HAL_RCCEx_PeriphCLKConfig error: %d\n", ret);
+   // return -1;
+    //while(1); 
+  }
   /* SAI1 clock enable */
   __HAL_RCC_SAI1_CLK_ENABLE(); 
   return ret;

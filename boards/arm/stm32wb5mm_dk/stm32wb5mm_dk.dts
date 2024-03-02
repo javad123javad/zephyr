@@ -35,6 +35,8 @@
 };
 
 &clk_hse {
+        clock-frequency = <DT_FREQ_M(16)>;
+	#dma-cells = <1>;
 	status = "okay";
 };
 
@@ -136,17 +138,34 @@ zephyr_udc0: &usb {
 	};
 };
 
-/*
+&dmamux1 {
+	status = "okay";
+};
+
+&spi1 {
+	pinctrl-0 = <&spi1_nss_pa4 &spi1_sck_pa1
+                     &spi1_miso_pa6 &spi1_mosi_pa7>;
+	status = "okay";
+	pinctrl-names = "default";
+};
+
 &i2s1 {
         status = "okay";
         pinctrl-0 = <&i2s1_ck1_pb8 &i2s1_d1_pc3>;
-        pinctrl-names = "default";
-        dmic_dev:st_dmic_dev@0 {
+   //     pinctrl-names = "default";
+     //   dmic_dev:st_dmic_dev@0 {
+       //         compatible = "st,mpxxdtyy";
+         //       reg = <0>;
+       // };
+	pinctrl-names = "default";
+
+        mp34dt05@0 {
                 compatible = "st,mpxxdtyy";
                 reg = <0>;
         };
+
 };
-*/
+
 
 &vref {
 	status = "okay";

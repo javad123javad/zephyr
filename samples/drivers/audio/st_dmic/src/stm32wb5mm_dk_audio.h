@@ -23,7 +23,7 @@
 
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32wb5mm_dk_conf.h"
@@ -37,8 +37,8 @@
 
 /** @addtogroup STM32WB5MM_DK
   * @{
-  */ 
-  
+  */
+
 /** @defgroup STM32WB5MM_DK_AUDIO STM32WB5MM_DK AUDIO
   * @{
   */
@@ -47,6 +47,7 @@
   * @{
   */
 extern SAI_HandleTypeDef            hAudioInSai;
+extern DMA_HandleTypeDef hSaiDma;
 
 typedef struct
 {
@@ -156,8 +157,8 @@ typedef struct
 /*Number of millisecond of audio at each DMA interrupt*/
 #define N_MS_PER_INTERRUPT               (20U)
 
-/* Default Audio IN internal buffer size */   
-#define DEFAULT_AUDIO_IN_BUFFER_SIZE        (uint32_t)((AUDIO_IN_SAMPLING_FREQUENCY/1000)*2)*N_MS_PER_INTERRUPT    
+/* Default Audio IN internal buffer size */
+#define DEFAULT_AUDIO_IN_BUFFER_SIZE        (uint32_t)((AUDIO_IN_SAMPLING_FREQUENCY/1000)*2)*N_MS_PER_INTERRUPT
 
 /* Audio In states */
 #define AUDIO_IN_STATE_RESET               0U

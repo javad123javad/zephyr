@@ -1,0 +1,14 @@
+mainmenu "ST-DMIC"
+
+	source "Kconfig.zephyr"
+	config ST_DMIC_STM32
+	default y
+	bool
+	select USE_STM32_HAL_SAI
+	select USE_STM32_HAL_GPIO
+	select USE_STM32_HAL_DMA
+	select USE_STM32_HAL_NVIC
+	select USE_STM32_HAL_PWR
+	select USE_STM32_HAL_CORTEX
+	select USE_STM32_HAL_PWR_EX
+	select USE_STM32_HAL_CRC

@@ -1,7 +1,0 @@
-mainmenu "ST-DMIC"
-
-	source "Kconfig.zephyr"
-	config ST_DMIC_STM32
-	default y
-	bool
-	select USE_STM32_HAL_SAI
