@@ -9,3 +9,12 @@ config TLC59731_STRIP
 	help
 	  Enable driver for the Texas Instruments TLC59731 EasySet LED
 	  controllers.
+config TLC59731_STRIP_SPI
+        bool "TLC59731 LED strip SPI driver"
+        default y
+        depends on DT_HAS_TI_TLC59731_ENABLED
+        help
+          Enable driver for TLC59731 (and compatibles) LED strip using SPI.
+          The SPI driver is portable, but requires significantly more
+          memory (1 byte of overhead per bit of pixel data).
+
