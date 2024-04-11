@@ -66,7 +66,7 @@ int main(void)
 				LOG_ERR("couldn't update strip: %d", rc);
 			}
 
-			k_sleep(DELAY_TIME);
+//			k_sleep(DELAY_TIME);
 		}
 
 		color = (color + 1) % ARRAY_SIZE(colors);

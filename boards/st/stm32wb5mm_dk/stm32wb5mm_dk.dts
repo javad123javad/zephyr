@@ -34,7 +34,7 @@
 		die-temp0 = &die_temp;
 		volt-sensor0 = &vref;
 		volt-sensor1 = &vbat;
-		led-strip = &rgb_led_strip;
+//		led-strip = &rgb_led_strip;
 	};
 };
 
@@ -149,7 +149,7 @@ zephyr_udc0: &usb {
 		gpios = <1 GPIO_ACTIVE_HIGH>;
 		gpio-hog;
 		output-high;
-		status = "disabled";
+		status = "okay";
 	};
 };
 

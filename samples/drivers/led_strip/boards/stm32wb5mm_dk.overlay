@@ -1,0 +1,37 @@
+/*
+ * Copyright (c) 2021, STMicroelectronics
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/dt-bindings/led/led.h>
+
+&spi1 {
+	pinctrl-0 = <&spi1_mosi_pa7 &spi1_nss_pa4 &spi1_sck_pa1 &spi1_miso_pb4>;
+	pinctrl-names = "default";
+	/* cs-gpios = <&gpioh 1 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; */
+	status = "okay";
+	led_strip: tlc59731@0 {
+		compatible = "ti,tlc59731-spi";
+
+		/* SPI */
+		reg = <0>; /* ignored, but necessary for SPI bindings */
+		spi-max-frequency = <400000>;
+		frame-format = <32768>; /* SPI_FRAME_FORMAT_TI */
+
+		/* TLC59731 */
+		chain-length = <1>; /* arbitrary; change at will */
+		spi-one-frame = <0x70>;
+		spi-zero-frame = <0x40>;
+		color-mapping = <LED_COLOR_ID_GREEN
+				 LED_COLOR_ID_RED
+				 LED_COLOR_ID_BLUE>;
+		status = "okay";
+	};
+};
+
+/ {
+	aliases {
+		led-strip = &led_strip;
+	};
+};

@@ -3,7 +3,7 @@
 
 config TLC59731_STRIP
 	bool "TLC59731 LED controller"
-	default y
+	default n
 	depends on DT_HAS_TI_TLC59731_ENABLED
 	select GPIO
 	help
@@ -12,7 +12,8 @@ config TLC59731_STRIP
 config TLC59731_STRIP_SPI
         bool "TLC59731 LED strip SPI driver"
         default y
-        depends on DT_HAS_TI_TLC59731_ENABLED
+        depends on DT_HAS_TI_TLC59731_SPI_ENABLED
+	select SPI 
         help
           Enable driver for TLC59731 (and compatibles) LED strip using SPI.
           The SPI driver is portable, but requires significantly more

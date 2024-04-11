@@ -33,12 +33,12 @@
  */
 
 #include <zephyr/drivers/led_strip.h>
-#include <zephyr/drivers/gpio.h>
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/spi.h>
 #include <zephyr/sys/math_extras.h>
 #include <zephyr/sys/util.h>
+#include <zephyr/dt-bindings/led/led.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(tlc59731_spi, CONFIG_LED_STRIP_LOG_LEVEL);
@@ -52,7 +52,10 @@ LOG_MODULE_REGISTER(tlc59731_spi, CONFIG_LED_STRIP_LOG_LEVEL);
 /* Threshould levels */
 #define TLC59731_HIGH      0x01
 #define TLC59731_LOW       0x00
-
+/* SPI Timing */
+#define TLC59731_T_CYCLE 0x80 /* 1000 0000 */
+#define TLC59731_ONE     0x90 /* 1001 0000 */
+#define	TLC59731_ZERO    0x80 /* 1000 0000 */
 /* Write command */
 #define TLC59731_WR 0x3A
 /* spi-one-frame and spi-zero-frame in DT are for 8-bit frames. */
@@ -65,17 +68,19 @@ LOG_MODULE_REGISTER(tlc59731_spi, CONFIG_LED_STRIP_LOG_LEVEL);
  *   isn't an EEPROM)
  */
 #define SPI_OPER(idx) (SPI_OP_MODE_MASTER | SPI_TRANSFER_MSB | \
-                  SPI_WORD_SET(SPI_FRAME_BITS))
-
+		SPI_WORD_SET(SPI_FRAME_BITS))
+static int TLC59731_EOS[] = {0x80, 0x00,0x00,0x01};
+static int TLC59731_GSLAT[]= {0x80,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01};
+static int TLC59731_WR_CMD[] = {TLC59731_ZERO,TLC59731_ZERO, TLC59731_ONE, TLC59731_ONE, TLC59731_ONE, TLC59731_ZERO, TLC59731_ONE, TLC59731_ZERO};
 struct tlc59731_spi_cfg {
 	struct spi_dt_spec bus;
-        uint8_t *px_buf;
-        size_t px_buf_size;
-        uint8_t one_frame;
-        uint8_t zero_frame;
-        uint8_t num_colors;
-        const uint8_t *color_mapping;
-        uint16_t reset_delay;
+	uint8_t *px_buf;
+	size_t px_buf_size;
+	uint8_t one_frame;
+	uint8_t zero_frame;
+	uint8_t num_colors;
+	const uint8_t *color_mapping;
+	uint16_t reset_delay;
 
 };
 
@@ -85,104 +90,152 @@ struct tlc59731_spi_cfg {
  * one_frame, and zero bit becomes zero_frame.
  */
 static inline void tlc59731_spi_ser(uint8_t buf[8], uint8_t color,
-                                  const uint8_t one_frame, const uint8_t zero_frame)
+		const uint8_t one_frame, const uint8_t zero_frame)
 {
-        int i;
-
-        for (i = 0; i < 8; i++) {
-                buf[i] = color & BIT(7 - i) ? one_frame : zero_frame;
-        }
+	int i;
+	for (i = 0; i < 8; i++) {
+		buf[i] = color & BIT(7 - i) ? one_frame : zero_frame;
+	}
 }
 /*
  * Returns true if and only if cfg->px_buf is big enough to convert
  * num_pixels RGB color values into SPI frames.
  */
 static inline bool num_pixels_ok(const struct tlc59731_spi_cfg *cfg,
-                                 size_t num_pixels)
+		size_t num_pixels)
 {
-        size_t nbytes;
-        bool overflow;
+	size_t nbytes;
+	bool overflow;
 
-        overflow = size_mul_overflow(num_pixels, cfg->num_colors * 8, &nbytes);
-        return !overflow && (nbytes <= cfg->px_buf_size);
+	overflow = size_mul_overflow(num_pixels, cfg->num_colors * 8, &nbytes);
+	return !overflow && (nbytes <= cfg->px_buf_size);
 }
 
-static inline int rgb_pulse(const struct gpio_dt_spec *led_dev)
+static const struct tlc59731_spi_cfg *dev_cfg(const struct device *dev)
 {
-	int fret = 0;
-
-	fret = gpio_pin_set_dt(led_dev, TLC59731_HIGH);
-	if (fret != 0) {
-		return fret;
-	}
-
-	fret = gpio_pin_set_dt(led_dev, TLC59731_LOW);
-	if (fret != 0) {
-		return fret;
-	}
-
-	return fret;
+	return dev->config;
 }
 
-static int rgb_write_bit(const struct gpio_dt_spec *led_dev, uint8_t data)
+/*
+ * Latch current color values on strip and reset its state machines.
+ */
+static inline void tlc59731_reset_delay(uint16_t delay)
 {
-	rgb_pulse(led_dev);
-
-	k_busy_wait(TLC59731_DELAY);
-
-	if (data) {
-		rgb_pulse(led_dev);
-		k_busy_wait(TLC59731_T_CYCLE_1);
-	} else {
-		k_busy_wait(TLC59731_T_CYCLE_0);
-	}
-
-	return 0;
+	k_usleep(delay);
 }
 
-static int rgb_write_data(const struct gpio_dt_spec *led_dev, uint8_t data)
+static int tlc59731_write_header(const struct device *dev)
 {
-	int8_t idx = 7;
+	int ret = 0;
+	const struct tlc59731_spi_cfg *cfg = dev_cfg(dev);
+	struct spi_buf buf = {
+		.buf = TLC59731_WR_CMD,
+		.len = 8,
+	};
+	const struct spi_buf_set tx = {
+		.buffers = &buf,
+		.count = 1
+	};
 
-	while (idx >= 0) {
-		rgb_write_bit(led_dev, data & BIT((idx--)));
+	ret = spi_write_dt(&cfg->bus, &tx);
+
+	if(ret)
+	{
+		LOG_ERR("%s: SPI Write failed.", dev->name);
 	}
 
 	return 0;
 }
 
-static int tlc59731_led_set_color(const struct device *dev, struct led_rgb *pixel)
+static int tlc59731_write_EOS(const struct device *dev)
 {
+	int ret = 0;
+	const struct tlc59731_spi_cfg *cfg = dev_cfg(dev);
+	struct spi_buf buf = {
+		.buf = TLC59731_EOS,
+		.len = 4,
+	};
+	const struct spi_buf_set tx = {
+		.buffers = &buf,
+		.count = 1
+	};
 
-	const struct tlc59731_cfg *tlc_conf = dev->config;
-	const struct gpio_dt_spec *led_gpio = &tlc_conf->sdi_gpio;
+	ret = spi_write_dt(&cfg->bus, &tx);
 
-	rgb_write_data(led_gpio, TLC59731_WR);
-	rgb_write_data(led_gpio, pixel->r);
-	rgb_write_data(led_gpio, pixel->g);
-	rgb_write_data(led_gpio, pixel->b);
+	if(ret)
+	{
+		LOG_ERR("%s: SPI Write failed.", dev->name);
+	}
 
 	return 0;
 }
 
 static int tlc59731_gpio_update_rgb(const struct device *dev, struct led_rgb *pixels,
-				    size_t num_pixels)
+		size_t num_pixels)
 {
 	size_t i;
 	int err = 0;
 
-	for (i = 0; i < num_pixels; i++) {
-		err = tlc59731_led_set_color(dev, &pixels[i]);
-		if (err) {
-			break;
-		}
+	tlc59731_write_header(dev);
+
+	const struct tlc59731_spi_cfg *cfg = dev_cfg(dev);
+	const uint8_t one = TLC59731_ONE, zero = TLC59731_ZERO;
+	struct spi_buf buf = {
+		.buf = cfg->px_buf,
+		.len = cfg->px_buf_size,
+	};
+	const struct spi_buf_set tx = {
+		.buffers = &buf,
+		.count = 1
+	};
+
+	uint8_t *px_buf = cfg->px_buf;
+	int rc;
+
+	if (!num_pixels_ok(cfg, num_pixels)) {
+		return -ENOMEM;
 	}
 
+	/*
+	 * Convert pixel data into SPI frames. Each frame has pixel data
+	 * in color mapping on-wire format (e.g. GRB, GRBW, RGB, etc).
+	 */
+	for (i = 0; i < num_pixels; i++) {
+		uint8_t j;
+
+		for (j = 0; j < cfg->num_colors; j++) {
+			uint8_t pixel;
+
+			switch (cfg->color_mapping[j]) {
+				/* White channel is not supported by LED strip API. */
+				case LED_COLOR_ID_RED:
+					pixel = pixels[i].r;
+					break;
+				case LED_COLOR_ID_GREEN:
+					pixel = pixels[i].g;
+					break;
+				case LED_COLOR_ID_BLUE:
+					pixel = pixels[i].b;
+					break;
+				default:
+					return -EINVAL;
+			}
+			tlc59731_spi_ser(px_buf, pixel, one, zero);
+			px_buf += 8;
+		}
+	}
+	/*
+	 * Display the pixel data.
+	 */
+	rc = spi_write_dt(&cfg->bus, &tx);
+	tlc59731_reset_delay(cfg->reset_delay);
+
+	tlc59731_write_EOS(dev);
 	return err;
 }
 
 static int tlc59731_gpio_update_channels(const struct device *dev, uint8_t *channels,
-					 size_t num_channels)
+		size_t num_channels)
 {
 	ARG_UNUSED(dev);
 	ARG_UNUSED(channels);
@@ -191,50 +244,97 @@ static int tlc59731_gpio_update_channels(const struct device *dev, uint8_t *chan
 	return -ENOTSUP;
 }
 
-static const struct led_strip_driver_api tlc59731_gpio_api = {
+static const struct led_strip_driver_api tlc59731_spi_api = {
 	.update_rgb = tlc59731_gpio_update_rgb,
 	.update_channels = tlc59731_gpio_update_channels,
 };
 
-static int tlc59731_gpio_init(const struct device *dev)
+static int tlc59731_spi_init(const struct device *dev)
 {
-	const struct tlc59731_cfg *tlc_conf = dev->config;
-	const struct gpio_dt_spec *led = &tlc_conf->sdi_gpio;
-	int err = 0;
-
-	if (!device_is_ready(led->port)) {
-		LOG_ERR("%s: no LEDs found (DT child nodes missing)", dev->name);
-		err = -ENODEV;
-		goto scape;
+	const struct tlc59731_spi_cfg *cfg = dev_cfg(dev);
+	uint8_t i;
+	printk("Init Device\n");
+	if (!spi_is_ready_dt(&cfg->bus)) {
+		LOG_ERR("SPI device %s not ready", cfg->bus.bus->name);
+		return -ENODEV;
 	}
 
-	err = gpio_pin_configure_dt(led, GPIO_OUTPUT_ACTIVE);
-	if (err < 0) {
-		LOG_ERR("%s: Unable to setup SDI port", dev->name);
-		err = -EIO;
-		goto scape;
+	for (i = 0; i < cfg->num_colors; i++) {
+		switch (cfg->color_mapping[i]) {
+			case LED_COLOR_ID_RED:
+			case LED_COLOR_ID_GREEN:
+			case LED_COLOR_ID_BLUE:
+				break;
+			default:
+				LOG_ERR("%s: invalid channel to color mapping."
+						"Check the color-mapping DT property",
+						dev->name);
+				return -EINVAL;
+		}
+	}
+	/* Send T_CYCLE */
+	uint8_t raw_buf[] = {TLC59731_T_CYCLE};
+	struct spi_buf buf = {
+		.buf = raw_buf,
+		.len = 1,
+	};
+	const struct spi_buf_set tx = {
+		.buffers = &buf,
+		.count = 1
+	};
+
+	int rc = spi_write_dt(&cfg->bus, &tx);
+	if(rc)
+	{
+		LOG_ERR("%s: Send Tcycle failed.\r\n");
 	}
 
-	err = gpio_pin_set_dt(led, TLC59731_LOW);
-	if (err < 0) {
-		LOG_ERR("%s: Unable to set the SDI-GPIO)", dev->name);
-		err = -EIO;
-		goto scape;
-	}
-
-	gpio_pin_set_dt(led, TLC59731_HIGH);
-	gpio_pin_set_dt(led, TLC59731_LOW);
 
 	k_busy_wait((TLC59731_DELAY + TLC59731_T_CYCLE_0));
-scape:
-	return err;
+	return 0;
 }
 
-#define TLC59731_DEVICE(i)                                                                         \
-	static struct tlc59731_cfg tlc59731_cfg_##i = {                                            \
-		.sdi_gpio = GPIO_DT_SPEC_INST_GET(i, gpios),                                       \
+#define TLC59731_SPI_NUM_PIXELS(idx) \
+	(DT_INST_PROP(idx, chain_length))
+#define TLC59731_SPI_HAS_WHITE(idx) \
+	(DT_INST_PROP(idx, has_white_channel) == 1)
+#define TLC59731_SPI_ONE_FRAME(idx) \
+	(DT_INST_PROP(idx, spi_one_frame))
+#define TLC59731_SPI_ZERO_FRAME(idx) \
+	(DT_INST_PROP(idx, spi_zero_frame))
+#define TLC59731_SPI_BUFSZ(idx) \
+	(TLC59731_NUM_COLORS(idx) * 8 * TLC59731_SPI_NUM_PIXELS(idx))
+
+/*
+ * Retrieve the channel to color mapping (e.g. RGB, BGR, GRB, ...) from the
+ * "color-mapping" DT property.
+ */
+#define TLC59731_COLOR_MAPPING(idx)                                 \
+	static const uint8_t tlc59731_spi_##idx##_color_mapping[] = \
+	DT_INST_PROP(idx, color_mapping)
+
+#define TLC59731_NUM_COLORS(idx) (DT_INST_PROP_LEN(idx, color_mapping))
+
+/* Get the latch/reset delay from the "reset-delay" DT property. */
+#define TLC59731_RESET_DELAY(idx) DT_INST_PROP(idx, reset_delay)
+
+
+#define TLC59731_SPI_DEVICE(idx)                                                                         \
+	static uint8_t tlc59731_spi_##idx##_px_buf[TLC59731_SPI_BUFSZ(idx)]; \
+	\
+	TLC59731_COLOR_MAPPING(idx);                                       \
+	\
+	static struct tlc59731_spi_cfg tlc59731_cfg_##idx = {                                            \
+		.bus = SPI_DT_SPEC_INST_GET(idx, SPI_OPER(idx), 0),      \
+		.px_buf = tlc59731_spi_##idx##_px_buf,                     \
+		.px_buf_size = TLC59731_SPI_BUFSZ(idx),                    \
+		.one_frame = TLC59731_SPI_ONE_FRAME(idx),                  \
+		.zero_frame = TLC59731_SPI_ZERO_FRAME(idx),                \
+		.num_colors = TLC59731_NUM_COLORS(idx),                    \
+		.color_mapping = tlc59731_spi_##idx##_color_mapping,       \
+		.reset_delay = TLC59731_RESET_DELAY(idx),                  \
 	};                                                                                         \
-                                                                                                   \
-	DEVICE_DT_INST_DEFINE(i, tlc59731_gpio_init, NULL, NULL, &tlc59731_cfg_##i, POST_KERNEL,   \
-			      CONFIG_LED_STRIP_INIT_PRIORITY, &tlc59731_gpio_api);
-DT_INST_FOREACH_STATUS_OKAY(TLC59731_DEVICE)
+	\
+	DEVICE_DT_INST_DEFINE(idx, tlc59731_spi_init, NULL, NULL, &tlc59731_cfg_##idx, POST_KERNEL,   \
+			CONFIG_LED_STRIP_INIT_PRIORITY, &tlc59731_spi_api);
+DT_INST_FOREACH_STATUS_OKAY(TLC59731_SPI_DEVICE)

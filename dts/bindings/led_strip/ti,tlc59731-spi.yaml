@@ -1,0 +1,19 @@
+# Copyright (c) 2024 Javad Rahimipetroudi <javad.rahimipetroudi@mind.be>
+# SPDX-License-Identifier: Apache-2.0
+
+compatible: "ti,tlc59731-spi"
+description: TLC59731 SPI RGB LED Controller
+include: [spi-device.yaml, tlc59731.yaml]
+
+properties:
+
+  spi-one-frame:
+    type: int
+    required: true
+    description: 8-bit SPI frame to shift out for a 1 pulse.
+
+  spi-zero-frame:
+    type: int
+    required: true
+    description: 8-bit SPI frame to shift out for a 0 pulse.
+
