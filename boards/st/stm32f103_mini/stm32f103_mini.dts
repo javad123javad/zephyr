@@ -5,8 +5,8 @@
  */
 
 /dts-v1/;
-#include <st/f1/stm32f103Xc.dtsi>
-#include <st/f1/stm32f103r(c-d-e)tx-pinctrl.dtsi>
+#include <st/f1/stm32f103X8.dtsi>
+#include <st/f1/stm32f103c(8-b)tx-pinctrl.dtsi>
 
 / {
 	model = "stm32f103_mini board";
@@ -126,7 +126,7 @@ zephyr_udc0: &usb {
 };
 
 &adc1 {
-	pinctrl-0 = <&adc1_in0_pa0>;
+	pinctrl-0 = <&adc1_in0_pa0 &adc1_in1_pa1>;
 	pinctrl-names = "default";
 	status = "okay";
 };

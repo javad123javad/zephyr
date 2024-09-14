@@ -2,4 +2,4 @@
 # SPDX-License-Identifier: Apache-2.0
 
 config BOARD_STM32F103_MINI
-	select SOC_STM32F103XE
+	select SOC_STM32F103X8
