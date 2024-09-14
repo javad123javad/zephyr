@@ -8,6 +8,32 @@ add_subdirectory(simcom)
 add_subdirectory_ifdef(CONFIG_MODEM_HL78XX hl78xx)
 
 # zephyr-keep-sorted-start
+=======
+if(CONFIG_MODEM_UBLOX_SARA)
+	zephyr_library_sources(ublox-sara-r4.c)
+endif()
+
+if(CONFIG_MODEM_QUECTEL_BG9X)
+	zephyr_library_sources(quectel-bg9x.c)
+endif()
+
+if(CONFIG_MODEM_WNCM14A2A)
+	zephyr_library_sources(wncm14a2a.c)
+endif()
+
+if (CONFIG_MODEM_HL7800)
+  zephyr_library_sources(hl7800.c)
+endif()
+
+if (CONFIG_MODEM_SIM7080)
+	zephyr_library_sources(simcom-sim7080.c)
+endif()
+
+if (CONFIG_NRF24L01)
+	zephyr_library_sources(nrf24l01.c)
+endif()
+
+zephyr_library_sources_ifdef(CONFIG_MODEM_CELLULAR modem_cellular.c)
 zephyr_library_sources_ifdef(CONFIG_MODEM_AT_SHELL modem_at_shell.c)
 zephyr_library_sources_ifdef(CONFIG_MODEM_AT_USER_PIPE modem_at_user_pipe.c)
 zephyr_library_sources_ifdef(CONFIG_MODEM_CELLULAR modem_cellular.c)

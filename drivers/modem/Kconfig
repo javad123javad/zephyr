@@ -200,4 +200,5 @@ source "drivers/modem/hl78xx/Kconfig.hl78xx"
 source "drivers/modem/simcom/Kconfig"
 # zephyr-keep-sorted-stop
 
+source "drivers/modem/Kconfig.nrf24l01"
 endif # MODEM
