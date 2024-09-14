@@ -3,4 +3,4 @@ board:
   full_name: STM32F103 Mini
   vendor: others
   socs:
-    - name: stm32f103xe
+    - name: stm32f103xb
