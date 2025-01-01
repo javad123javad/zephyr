@@ -1,0 +1,6 @@
+[submodule "zephyr_workspace"]
+	path = zephyr_workspace
+	url = git@github.com:javad123javad/zephyr-workspace.git
+[submodule "workspace"]
+	path = workspace
+	url = git@github.com:javad123javad/zephyr-workspace.git
