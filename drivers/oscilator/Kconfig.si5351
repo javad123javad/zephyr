@@ -1,0 +1,15 @@
+# Copyright (c) 2025 Javad Rahimi <javad.rahimipetroudi@mind.be>
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig SI5351
+	bool "SI5351 clock generator driver"
+	default y
+	depends on DT_HAS_SKYWORKS_SI5351_ENABLED
+	select I2C
+	help
+	  Enable clock generator driver for SI5351.
+
+	  The Si5351 is an I2 C configurable clock generator that is
+	  ideally suited for replacing crystals, crystal oscillators,
+	  VCXOs, phase-locked loops (PLLs), and fanout buffers in
+	  cost-sensitive applications

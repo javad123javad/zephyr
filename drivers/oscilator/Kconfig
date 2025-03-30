@@ -1,0 +1,31 @@
+# Copyright (c) 2025 Javad Rahimipetroudi <javad.rahimipetroudi@gmail.com>
+# SPDX-License-Identifier: Apache-2.0
+
+# Top-level configuration file for oscilator drivers.
+
+menuconfig OSC 
+	bool "Oscilators  drivers"
+	help
+	  Include Oscilator and clock generator drivers in the system configuration.
+
+if OSC
+
+module = OSC
+module-str = osc
+source "subsys/logging/Kconfig.template.log_config"
+
+config OSC_INIT_PRIORITY
+	int "Oscilator initialization priority"
+	default 90
+	help
+	  System initialization priority for oscilator drivers.
+
+config OSC_SHELL
+	bool "OSC shell"
+	depends on SHELL
+	help
+	  Enable oscilator shell for testing.
+
+source "drivers/led/Kconfig.si5351"
+
+endif # OSC 
