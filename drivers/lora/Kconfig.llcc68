@@ -1,0 +1,13 @@
+config LLCC68
+    bool "LLCC68 LoRa Transceiver Driver"
+    default y
+    select SPI
+    help
+      Enable LLCC68 LoRa Transceiver Driver
+
+config LLCC68_LOG_LEVEL
+    int "LLCC68 Log Level"
+    depends on LLCC68
+    default 0
+    help
+      Set log level for LLCC68 driver
