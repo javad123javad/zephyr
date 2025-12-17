@@ -53,7 +53,7 @@ struct tm1637_config {
 
 struct tm1637_data {
 	uint8_t current_brightness; /* bits 0-2: level (0-7), bit 3: enabled (1=on) */
-	uint8_t display_buffer[4];  /* raw segment data for 4 digits */
+	uint8_t display_buffer[7];  /* raw segment data for 4 digits */
 	int16_t cursor_x;
 	int16_t cursor_y;
 };
@@ -153,7 +153,7 @@ static int tm1637_update_display(const struct device *dev)
 	tm1637_start_condition(dev);
 	tm1637_send_byte(dev, TM1637_CMD_ADDR_BASE);
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 6; i++) {
 		tm1637_send_byte(dev, data->display_buffer[i]);
 	}
 
@@ -174,12 +174,18 @@ static int tm1637_auxdisplay_write(const struct device *dev, const uint8_t *buf,
 	struct tm1637_data *data = dev->data;
 	uint32_t pos = 0;
 	uint16_t i = 0;
-
+	uint8_t oStr[8] = {0};
+	char tmp[7] = {0};
+	LOG_INF("buf: %s \t len: %d", buf, len);
+	memset(tmp,' ', 6);
+	strncpy(tmp + (6 - len), buf, len);
+	strncpy(oStr, tmp + 3 , 3);
+	strncpy(oStr + 3, tmp, 3);
 	/* Clear the display buffer first */
 	memset(data->display_buffer, 0, sizeof(data->display_buffer));
 
-	while (i < len && pos < 4) {
-		char c = buf[i];
+	while (i < 6 && pos < 6) {
+		char c = oStr[i];
 		uint8_t segment_code = 0;
 		bool valid_char = false;
 
@@ -197,11 +203,11 @@ static int tm1637_auxdisplay_write(const struct device *dev, const uint8_t *buf,
 		}
 
 		if (valid_char) {
-			data->display_buffer[pos] = segment_code;
+			data->display_buffer[5- pos] |= segment_code;
 
 			/* Check if next character is a decimal point */
-			if (i + 1 < len && buf[i + 1] == '.') {
-				data->display_buffer[pos] |=
+			if (i + 1 < 6 && buf[i + 1] == '.') {
+				data->display_buffer[pos+1] |=
 					DP_BIT; /* Add decimal point to current digit */
 				i += 2;         /* Skip both the character and the '.' */
 			} else {
@@ -246,7 +252,6 @@ static int tm1637_auxdisplay_display_on(const struct device *dev)
 	struct tm1637_data *data = dev->data;
 
 	data->current_brightness |= TM1637_DISPLAY_ON_BIT;
-
 	return tm1637_update_display(dev);
 }
 
@@ -347,7 +352,7 @@ static const struct auxdisplay_driver_api tm1637_auxdisplay_api = {
 		.bit_delay_us = DT_INST_PROP(n, bit_delay_us),                                     \
 		.capabilities =                                                                    \
 			{                                                                          \
-				.columns = 4,                                                      \
+				.columns = 7,                                                      \
 				.rows = 1,                                                         \
 			},                                                                         \
 	};                                                                                         \
