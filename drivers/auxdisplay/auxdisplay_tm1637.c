@@ -30,6 +30,7 @@ LOG_MODULE_REGISTER(tm1637_auxdisplay, CONFIG_AUXDISPLAY_LOG_LEVEL);
 #define DP_BIT    BIT(7) /* Decimal point */
 #define BLANK     (0)    /* No segments lit */
 
+#define DISP_DIGITS 	6
 /* Segment mapping: A=bit0, B=bit1, C=bit2, D=bit3, E=bit4, F=bit5, G=bit6; DP=bit7 */
 static const uint8_t digit_segment_codes[] = {
 	0x3F, /* 0 */
@@ -42,6 +43,16 @@ static const uint8_t digit_segment_codes[] = {
 	0x07, /* 7 */
 	0x7F, /* 8 */
 	0x6F, /* 9 */
+};
+
+static const uint8_t dots_positions[] = {
+	0x00,
+	0x02,
+	0x01,
+	0x00,
+	0x05,
+	0x04,
+	0x03,
 };
 
 struct tm1637_config {
@@ -167,6 +178,47 @@ static int tm1637_update_display(const struct device *dev)
 	return 0;
 }
 
+static int tm1637_format_number(const uint8_t * buf, uint16_t len, uint8_t * formatted_num)
+{
+	int ret = 0;
+	/* First search for dot point */
+	uint8_t * dot_spos = memchr(buf, '.', len);
+	int8_t dot_idx = -1, dot_real_pos = -1;
+	uint8_t padded_str[DISP_DIGITS + 1] = {0};
+	memset(padded_str,' ', DISP_DIGITS );
+
+	if(dot_spos)
+	{
+		dot_idx = dot_spos - buf;
+		dot_real_pos = dots_positions[dot_spos - buf];
+	}
+	/* remove the dot from the string */
+	uint8_t cleaned_str[DISP_DIGITS + 1] = {0};
+
+	if(dot_idx >= 0)
+	{
+
+		memcpy(cleaned_str, buf, dot_idx );
+		memcpy(cleaned_str + dot_idx, buf + dot_idx +1, len - dot_idx);
+
+		//memcpy(formatted_num, cleaned_str, DISP_DIGITS + 1);
+	}
+	else {
+		memcpy(cleaned_str, buf, len);
+	}
+
+	/* Pad enough digits */
+	uint8_t str_digits = strlen(cleaned_str);
+	LOG_INF("cleaned_str: %s --  str_digits: %d", cleaned_str, str_digits);
+	memcpy(padded_str + (DISP_DIGITS - str_digits), cleaned_str, str_digits);
+	LOG_INF("padded_str: %s", padded_str);
+	memcpy(formatted_num, padded_str + DISP_DIGITS/2 , DISP_DIGITS/2);
+	memcpy(formatted_num + DISP_DIGITS/2 , padded_str, DISP_DIGITS/2);
+
+	return dot_real_pos;
+
+
+}
 /* auxdisplay driver API */
 
 static int tm1637_auxdisplay_write(const struct device *dev, const uint8_t *buf, uint16_t len)
@@ -174,13 +226,11 @@ static int tm1637_auxdisplay_write(const struct device *dev, const uint8_t *buf,
 	struct tm1637_data *data = dev->data;
 	uint32_t pos = 0;
 	uint16_t i = 0;
-	uint8_t oStr[8] = {0};
-	char tmp[7] = {0};
-	LOG_INF("buf: %s \t len: %d", buf, len);
-	memset(tmp,' ', 6);
-	strncpy(tmp + (6 - len), buf, len);
-	strncpy(oStr, tmp + 3 , 3);
-	strncpy(oStr + 3, tmp, 3);
+	uint8_t oStr[8 + 1] = {0};
+	int dot_idx = -1;
+
+	dot_idx = tm1637_format_number(buf, len, oStr);
+	LOG_INF("oStr: %s", oStr);
 	/* Clear the display buffer first */
 	memset(data->display_buffer, 0, sizeof(data->display_buffer));
 
@@ -206,6 +256,7 @@ static int tm1637_auxdisplay_write(const struct device *dev, const uint8_t *buf,
 			data->display_buffer[5- pos] |= segment_code;
 
 			/* Check if next character is a decimal point */
+#if 0	
 			if (i + 1 < 6 && buf[i + 1] == '.') {
 				data->display_buffer[pos+1] |=
 					DP_BIT; /* Add decimal point to current digit */
@@ -213,11 +264,17 @@ static int tm1637_auxdisplay_write(const struct device *dev, const uint8_t *buf,
 			} else {
 				i++; /* Just move to next character */
 			}
+#endif
+			i++;
 			pos++;
+
 		} else {
 			/* Skip unknown characters */
 			i++;
 		}
+		if(dot_idx>=0)
+			data->display_buffer[dot_idx ] |= DP_BIT;
+
 	}
 
 	/* Reset cursor to end of valid data */
