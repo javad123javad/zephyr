@@ -30,7 +30,7 @@ LOG_MODULE_REGISTER(tm1637_auxdisplay, CONFIG_AUXDISPLAY_LOG_LEVEL);
 #define DP_BIT    BIT(7) /* Decimal point */
 #define BLANK     (0)    /* No segments lit */
 
-#define DISP_DIGITS 	6
+#define MAX_DISP_DIGITS 	6
 /* Segment mapping: A=bit0, B=bit1, C=bit2, D=bit3, E=bit4, F=bit5, G=bit6; DP=bit7 */
 static const uint8_t digit_segment_codes[] = {
 	0x3F, /* 0 */
@@ -60,11 +60,12 @@ struct tm1637_config {
 	struct gpio_dt_spec data_pin;
 	uint16_t bit_delay_us;
 	struct auxdisplay_capabilities capabilities;
+	uint8_t num_of_digits;
 };
 
 struct tm1637_data {
 	uint8_t current_brightness; /* bits 0-2: level (0-7), bit 3: enabled (1=on) */
-	uint8_t display_buffer[7];  /* raw segment data for 4 digits */
+	uint8_t display_buffer[8];  /* raw segment data for 4 digits */
 	int16_t cursor_x;
 	int16_t cursor_y;
 };
@@ -154,6 +155,7 @@ static bool tm1637_send_byte(const struct device *dev, uint8_t data_byte)
 static int tm1637_update_display(const struct device *dev)
 {
 	struct tm1637_data *data = dev->data;
+	const struct tm1637_config *cfg = dev->config;
 
 	/* Send data command */
 	tm1637_start_condition(dev);
@@ -164,7 +166,7 @@ static int tm1637_update_display(const struct device *dev)
 	tm1637_start_condition(dev);
 	tm1637_send_byte(dev, TM1637_CMD_ADDR_BASE);
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < cfg->num_of_digits; i++) {
 		tm1637_send_byte(dev, data->display_buffer[i]);
 	}
 
@@ -178,30 +180,28 @@ static int tm1637_update_display(const struct device *dev)
 	return 0;
 }
 
-static int tm1637_format_number(const uint8_t * buf, uint16_t len, uint8_t * formatted_num)
+static int tm1637_format_number(const struct device *dev, const uint8_t * buf, uint16_t len, uint8_t * formatted_num)
 {
-	int ret = 0;
+	int8_t dot_idx = -1, dot_real_pos = -1;
+	uint8_t padded_str[MAX_DISP_DIGITS + 1] = {0};
+	memset(padded_str,' ', MAX_DISP_DIGITS );
+
 	/* First search for dot point */
 	uint8_t * dot_spos = memchr(buf, '.', len);
-	int8_t dot_idx = -1, dot_real_pos = -1;
-	uint8_t padded_str[DISP_DIGITS + 1] = {0};
-	memset(padded_str,' ', DISP_DIGITS );
-
 	if(dot_spos)
 	{
 		dot_idx = dot_spos - buf;
 		dot_real_pos = dots_positions[dot_spos - buf];
 	}
+
 	/* remove the dot from the string */
-	uint8_t cleaned_str[DISP_DIGITS + 1] = {0};
+	uint8_t cleaned_str[MAX_DISP_DIGITS + 1] = {0};
 
 	if(dot_idx >= 0)
 	{
-
+		// pad space before digits
 		memcpy(cleaned_str, buf, dot_idx );
 		memcpy(cleaned_str + dot_idx, buf + dot_idx +1, len - dot_idx);
-
-		//memcpy(formatted_num, cleaned_str, DISP_DIGITS + 1);
 	}
 	else {
 		memcpy(cleaned_str, buf, len);
@@ -210,10 +210,10 @@ static int tm1637_format_number(const uint8_t * buf, uint16_t len, uint8_t * for
 	/* Pad enough digits */
 	uint8_t str_digits = strlen(cleaned_str);
 	LOG_INF("cleaned_str: %s --  str_digits: %d", cleaned_str, str_digits);
-	memcpy(padded_str + (DISP_DIGITS - str_digits), cleaned_str, str_digits);
+	memcpy(padded_str + (MAX_DISP_DIGITS - str_digits), cleaned_str, str_digits);
 	LOG_INF("padded_str: %s", padded_str);
-	memcpy(formatted_num, padded_str + DISP_DIGITS/2 , DISP_DIGITS/2);
-	memcpy(formatted_num + DISP_DIGITS/2 , padded_str, DISP_DIGITS/2);
+	memcpy(formatted_num, padded_str + MAX_DISP_DIGITS/2 , MAX_DISP_DIGITS/2);
+	memcpy(formatted_num + MAX_DISP_DIGITS/2 , padded_str, MAX_DISP_DIGITS/2);
 
 	return dot_real_pos;
 
@@ -224,17 +224,27 @@ static int tm1637_format_number(const uint8_t * buf, uint16_t len, uint8_t * for
 static int tm1637_auxdisplay_write(const struct device *dev, const uint8_t *buf, uint16_t len)
 {
 	struct tm1637_data *data = dev->data;
+	const struct tm1637_config *cfg = dev->config;
+
+	uint8_t ndigits = cfg->num_of_digits;
 	uint32_t pos = 0;
 	uint16_t i = 0;
-	uint8_t oStr[8 + 1] = {0};
+	uint8_t oStr[MAX_DISP_DIGITS + 1] = {0};
 	int dot_idx = -1;
+	if(cfg->num_of_digits > 3)
+	{
+		dot_idx = tm1637_format_number(dev, buf, len, oStr);
+		LOG_INF("oStr: %s", oStr);
+	}
+	else
+	{
+		memcpy(oStr, buf, len);
+	}
 
-	dot_idx = tm1637_format_number(buf, len, oStr);
-	LOG_INF("oStr: %s", oStr);
 	/* Clear the display buffer first */
 	memset(data->display_buffer, 0, sizeof(data->display_buffer));
 
-	while (i < 6 && pos < 6) {
+	while (i < ndigits && pos < ndigits) {
 		char c = oStr[i];
 		uint8_t segment_code = 0;
 		bool valid_char = false;
@@ -253,28 +263,33 @@ static int tm1637_auxdisplay_write(const struct device *dev, const uint8_t *buf,
 		}
 
 		if (valid_char) {
-			data->display_buffer[5- pos] |= segment_code;
-
-			/* Check if next character is a decimal point */
-#if 0	
-			if (i + 1 < 6 && buf[i + 1] == '.') {
-				data->display_buffer[pos+1] |=
-					DP_BIT; /* Add decimal point to current digit */
-				i += 2;         /* Skip both the character and the '.' */
-			} else {
-				i++; /* Just move to next character */
+			if(ndigits > 3)
+			{
+				data->display_buffer[5- pos] |= segment_code;
+				if(dot_idx>=0)
+					data->display_buffer[dot_idx ] |= DP_BIT;
+				i++;
 			}
-#endif
-			i++;
+			else
+			{
+				data->display_buffer[pos] |= segment_code;
+
+				/* Check if next character is a decimal point */
+				if (i + 1 < 6 && buf[i + 1] == '.') {
+					data->display_buffer[pos] |=
+						DP_BIT; /* Add decimal point to current digit */
+					i += 2;         /* Skip both the character and the '.' */
+				}
+				else {
+					i++;
+				}
+			}
 			pos++;
 
 		} else {
 			/* Skip unknown characters */
 			i++;
 		}
-		if(dot_idx>=0)
-			data->display_buffer[dot_idx ] |= DP_BIT;
-
 	}
 
 	/* Reset cursor to end of valid data */
@@ -322,24 +337,24 @@ static int tm1637_auxdisplay_display_off(const struct device *dev)
 }
 
 static int tm1637_auxdisplay_cursor_position_set(const struct device *dev,
-						 enum auxdisplay_position type, int16_t x,
-						 int16_t y)
+		enum auxdisplay_position type, int16_t x,
+		int16_t y)
 {
 	const struct tm1637_config *cfg = dev->config;
 	struct tm1637_data *data = dev->data;
 
 	switch (type) {
-	case AUXDISPLAY_POSITION_RELATIVE:
-		x += data->cursor_x;
-		y += data->cursor_y;
-		break;
-	case AUXDISPLAY_POSITION_RELATIVE_DIRECTION:
-		return -ENOTSUP;
-	case AUXDISPLAY_POSITION_ABSOLUTE:
-		/* x, y already in absolute coordinates */
-		break;
-	default:
-		return -EINVAL;
+		case AUXDISPLAY_POSITION_RELATIVE:
+			x += data->cursor_x;
+			y += data->cursor_y;
+			break;
+		case AUXDISPLAY_POSITION_RELATIVE_DIRECTION:
+			return -ENOTSUP;
+		case AUXDISPLAY_POSITION_ABSOLUTE:
+			/* x, y already in absolute coordinates */
+			break;
+		default:
+			return -EINVAL;
 	}
 
 	if (x < 0 || y < 0 || x >= cfg->capabilities.columns || y >= cfg->capabilities.rows) {
@@ -361,7 +376,7 @@ static int tm1637_auxdisplay_cursor_position_get(const struct device *dev, int16
 }
 
 static int tm1637_auxdisplay_capabilities_get(const struct device *dev,
-					      struct auxdisplay_capabilities *cap)
+		struct auxdisplay_capabilities *cap)
 {
 	const struct tm1637_config *cfg = dev->config;
 
@@ -407,15 +422,16 @@ static const struct auxdisplay_driver_api tm1637_auxdisplay_api = {
 		.clock_pin = GPIO_DT_SPEC_INST_GET(n, clk_gpios),                                  \
 		.data_pin = GPIO_DT_SPEC_INST_GET(n, dio_gpios),                                   \
 		.bit_delay_us = DT_INST_PROP(n, bit_delay_us),                                     \
+		.num_of_digits = DT_INST_PROP(n, num_of_digits), 				   \
 		.capabilities =                                                                    \
-			{                                                                          \
-				.columns = 7,                                                      \
-				.rows = 1,                                                         \
-			},                                                                         \
+		{                                                                          \
+			.columns = 7,                                                      \
+			.rows = 1,                                                         \
+		},                                                                         \
 	};                                                                                         \
 	static struct tm1637_data tm1637_data_##n;                                                 \
 	DEVICE_DT_INST_DEFINE(n, tm1637_initialize, NULL, &tm1637_data_##n, &tm1637_config_##n,    \
-			      POST_KERNEL, CONFIG_AUXDISPLAY_INIT_PRIORITY,                        \
-			      &tm1637_auxdisplay_api);
+			POST_KERNEL, CONFIG_AUXDISPLAY_INIT_PRIORITY,                        \
+			&tm1637_auxdisplay_api);
 
 DT_INST_FOREACH_STATUS_OKAY(TM1637_INIT)

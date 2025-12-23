@@ -26,3 +26,9 @@ properties:
       TM1637 datasheet specifies minimum timings of 100ns (setup/hold)
       and 400ns (clock pulse width). Default of 100µs provides safe
       margin for software GPIO operations across different platforms.
+  
+  num-of-digits:
+    type: int
+    default: 3
+    description: |
+      Number of 7-Segment digits connected to the controller.
