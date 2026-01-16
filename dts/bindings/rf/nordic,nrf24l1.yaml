@@ -1,0 +1,30 @@
+# Copyright (c) 2019, Manivannan Sadhasivam
+# Copyright (c) 2020, Grinn
+# SPDX-License-Identifier: Apache-2.0
+
+include: spi-device.yaml
+compatible: "nordic,nrf24l1"
+description: Nordic nRF24L1 series RF module.
+
+properties:
+  ce-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      GPIO connected to the modem's CE pin.
+
+      This signal is open-drain, active-high (NRF24L1).
+
+  csn-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      Chip enable pin.
+
+      These signals are normally active-high.
+  irq-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      Intrep request pin for NRF24L
+

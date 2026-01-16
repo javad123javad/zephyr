@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
-zephyr_sources_ifdef(CONFIG_RF_SHELL shell.c)
+zephyr_syscall_header(${ZEPHYR_BASE}/include/zephyr/drivers/rf/rf.h)
 
-# zephyr-keep-sorted-start
-#add_subdirectory_ifdef(CONFIG_LORA_MODULE_BACKEND_LORAMAC_NODE loramac_node)
-#add_subdirectory_ifdef(CONFIG_LORA_MODULE_BACKEND_LORA_BASICS_MODEM lora_basics_modem)
-# zephyr-keep-sorted-stop
+zephyr_library()
+
+zephyr_sources_ifdef(CONFIG_RF_SHELL shell.c)
+zephyr_library_sources_ifdef(CONFIG_NORDIC_NRF24L1 nrf24l1.c)
+

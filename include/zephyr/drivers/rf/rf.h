@@ -21,6 +21,7 @@
  * @{
  */
 
+#include "zephyr/toolchain.h"
 #include <stdint.h>
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
@@ -121,14 +122,6 @@ typedef int (*rf_api_config)(const struct device *dev,
 			       struct rf_modem_config *config);
 
 /**
- * @typedef rf_api_airtime()
- * @brief Callback API for querying packet airtime
- *
- * @see rf_airtime() for argument descriptions.
- */
-typedef uint32_t (*rf_api_airtime)(const struct device *dev, uint32_t data_len);
-
-/**
  * @typedef rf_api_send()
  * @brief Callback API for sending data over the RF module
  *
@@ -167,23 +160,12 @@ typedef int (*rf_api_recv)(const struct device *dev, uint8_t *data,
 typedef int (*rf_api_recv_async)(const struct device *dev, rf_recv_cb cb,
 			     void *user_data);
 
-/**
- * @typedef rf_api_test_cw()
- * @brief Callback API for transmitting a continuous wave
- *
- * @see rf_test_cw() for argument descriptions.
- */
-typedef int (*rf_api_test_cw)(const struct device *dev, uint32_t frequency,
-				int8_t tx_power, uint16_t duration);
-
 __subsystem struct rf_driver_api {
 	rf_api_config config;
-	rf_api_airtime airtime;
 	rf_api_send send;
 	rf_api_send_async send_async;
 	rf_api_recv recv;
 	rf_api_recv_async recv_async;
-	rf_api_test_cw test_cw;
 };
 
 /** @endcond */
@@ -196,30 +178,17 @@ __subsystem struct rf_driver_api {
 		  modem
  * @return 0 on success, negative on error
  */
-static inline int rf_config(const struct device *dev,
+
+__syscall int rf_config(const struct device *dev,
+                                struct rf_modem_config *config);
+
+static inline int z_impl_rf_config(const struct device *dev,
 			      struct rf_modem_config *config)
 {
 	const struct rf_driver_api *api =
 		(const struct rf_driver_api *)dev->api;
 
 	return api->config(dev, config);
-}
-
-/**
- * @brief Query the airtime of a packet with a given length
- *
- * @note Uses the current radio configuration from @ref rf_config
- *
- * @param dev       RF device
- * @param data_len  Length of the data
- * @return Airtime of packet in milliseconds
- */
-static inline uint32_t rf_airtime(const struct device *dev, uint32_t data_len)
-{
-	const struct rf_driver_api *api =
-		(const struct rf_driver_api *)dev->api;
-
-	return api->airtime(dev, data_len);
 }
 
 /**
@@ -232,7 +201,10 @@ static inline uint32_t rf_airtime(const struct device *dev, uint32_t data_len)
  * @param data_len  Length of the data to be sent
  * @return 0 on success, negative on error
  */
-static inline int rf_send(const struct device *dev,
+__syscall int rf_send(const struct device *dev,
+			    uint8_t *data, uint32_t data_len);
+
+static inline int z_impl_rf_send(const struct device *dev,
 			    uint8_t *data, uint32_t data_len)
 {
 	const struct rf_driver_api *api =
@@ -255,7 +227,12 @@ static inline int rf_send(const struct device *dev,
  *        notify the end of the transmission).
  * @return 0 on success, negative on error
  */
-static inline int rf_send_async(const struct device *dev,
+
+__syscall int rf_send_async(const struct device *dev,
+				  uint8_t *data, uint32_t data_len,
+				  struct k_poll_signal *async);
+
+static inline int z_impl_rf_send_async(const struct device *dev,
 				  uint8_t *data, uint32_t data_len,
 				  struct k_poll_signal *async)
 {
@@ -279,7 +256,11 @@ static inline int rf_send_async(const struct device *dev,
  * @param snr       SNR of received data
  * @return Length of the data received on success, negative on error
  */
-static inline int rf_recv(const struct device *dev, uint8_t *data,
+__syscall int rf_recv(const struct device *dev, uint8_t *data,
+			    uint8_t size,
+			    k_timeout_t timeout, int16_t *rssi, int8_t *snr);
+
+static inline int z_impl_rf_recv(const struct device *dev, uint8_t *data,
 			    uint8_t size,
 			    k_timeout_t timeout, int16_t *rssi, int8_t *snr)
 {
@@ -304,7 +285,11 @@ static inline int rf_recv(const struct device *dev, uint8_t *data,
  * @param user_data User data passed to callback
  * @return 0 when reception successfully setup, negative on error
  */
-static inline int rf_recv_async(const struct device *dev, rf_recv_cb cb,
+
+__syscall int rf_recv_async(const struct device *dev, rf_recv_cb cb,
+			       void *user_data);
+
+static inline int z_impl_rf_recv_async(const struct device *dev, rf_recv_cb cb,
 			       void *user_data)
 {
 	const struct rf_driver_api *api =
@@ -313,30 +298,6 @@ static inline int rf_recv_async(const struct device *dev, rf_recv_cb cb,
 	return api->recv_async(dev, cb, user_data);
 }
 
-/**
- * @brief Transmit an unmodulated continuous wave at a given frequency
- *
- * @note Only use this functionality in a test setup where the
- * transmission does not interfere with other devices.
- *
- * @param dev       RF device
- * @param frequency Output frequency (Hertz)
- * @param tx_power  TX power (dBm)
- * @param duration  Transmission duration in seconds.
- * @return 0 on success, negative on error
- */
-static inline int rf_test_cw(const struct device *dev, uint32_t frequency,
-			       int8_t tx_power, uint16_t duration)
-{
-	const struct rf_driver_api *api =
-		(const struct rf_driver_api *)dev->api;
-
-	if (api->test_cw == NULL) {
-		return -ENOSYS;
-	}
-
-	return api->test_cw(dev, frequency, tx_power, duration);
-}
 
 #ifdef __cplusplus
 }
@@ -345,5 +306,6 @@ static inline int rf_test_cw(const struct device *dev, uint32_t frequency,
 /**
  * @}
  */
+#include <zephyr/syscalls/rf.h>
 
 #endif	/* ZEPHYR_INCLUDE_DRIVERS_RF_H_ */

@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2026  Javad Rahimipetroudi
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config NORDIC_NRF24L1
+        bool "Nordic NRF24L1 RF module"
+        default y
+        depends on DT_HAS_NORDIC_NRF24L1_ENABLED
+        select GPIO
+        select SPI
+        help
+          Enable the Nordic NRF24L1 driver
+
+if NORDIC_NRF24L1
+
+endif   # NORDIC_NRF24L1
+
+
