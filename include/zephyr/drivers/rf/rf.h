@@ -128,7 +128,7 @@ typedef int (*rf_api_config)(const struct device *dev,
  * @see rf_send() for argument descriptions.
  */
 typedef int (*rf_api_send)(const struct device *dev,
-			     uint8_t *data, uint32_t data_len);
+			     uint8_t *data, uint8_t data_len);
 
 /**
  * @typedef rf_api_send_async()
@@ -147,8 +147,7 @@ typedef int (*rf_api_send_async)(const struct device *dev,
  * @see rf_recv() for argument descriptions.
  */
 typedef int (*rf_api_recv)(const struct device *dev, uint8_t *data,
-			     uint8_t size,
-			     k_timeout_t timeout, int16_t *rssi, int8_t *snr);
+			     uint8_t size);
 
 /**
  * @typedef rf_api_recv_async()
@@ -202,10 +201,10 @@ static inline int z_impl_rf_config(const struct device *dev,
  * @return 0 on success, negative on error
  */
 __syscall int rf_send(const struct device *dev,
-			    uint8_t *data, uint32_t data_len);
+			    uint8_t *data, uint8_t data_len);
 
 static inline int z_impl_rf_send(const struct device *dev,
-			    uint8_t *data, uint32_t data_len)
+			    uint8_t *data, uint8_t data_len)
 {
 	const struct rf_driver_api *api =
 		(const struct rf_driver_api *)dev->api;
@@ -257,17 +256,15 @@ static inline int z_impl_rf_send_async(const struct device *dev,
  * @return Length of the data received on success, negative on error
  */
 __syscall int rf_recv(const struct device *dev, uint8_t *data,
-			    uint8_t size,
-			    k_timeout_t timeout, int16_t *rssi, int8_t *snr);
+			    uint8_t size);
 
 static inline int z_impl_rf_recv(const struct device *dev, uint8_t *data,
-			    uint8_t size,
-			    k_timeout_t timeout, int16_t *rssi, int8_t *snr)
+			    uint8_t size)
 {
 	const struct rf_driver_api *api =
 		(const struct rf_driver_api *)dev->api;
 
-	return api->recv(dev, data, size, timeout, rssi, snr);
+	return api->recv(dev, data, size);
 }
 
 /**
