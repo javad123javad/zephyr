@@ -1021,15 +1021,39 @@ static const struct rf_driver_api nrf24l01_api = {
 };
 #define NRF24L01_SPI_MODE SPI_WORD_SET(8)
 
-#define NRF24L01_DEVICE_INIT(n)                                                                        \
-        static struct nrf24l01_data dev_data_##n;                                                      \
-        static const struct nrf24l01_config dev_config_##n = {                                         \
-                .spi = SPI_DT_SPEC_INST_GET(n, NRF24L01_SPI_MODE ),                                  \
-                .ce = GPIO_DT_SPEC_INST_GET(n, ce_gpios),                                              \
-                .csn = GPIO_DT_SPEC_INST_GET(n,csn_gpios),                                             \
-                .irq = GPIO_DT_SPEC_INST_GET(n, irq_gpios),                                            \
-        };                                                                                            \
-        DEVICE_DT_INST_DEFINE(n, &nrf24l01_init, NULL, &dev_data_##n, &dev_config_##n, POST_KERNEL,    \
+#define NRF24L01_DEVICE_INIT(n)                                                                         \
+        static struct nrf24l01_data dev_data_##n={                                                      \
+                .addr_width = DT_INST_PROP_OR(n, addr_width, 5),                                        \
+                .channel_frequency = DT_INST_PROP(n, channel_frequency),                                \
+		.data_rate_2mbps = DT_INST_PROP_OR(n, data_rate_2mbps, false),                          \
+		.rf_power_attenuation = DT_INST_PROP(n, rf_power_attenuation),                          \
+		.lna_gain = DT_INST_PROP_OR(n, lna_gain, false),                                        \
+		.crc_encoding_twobytes = DT_INST_PROP_OR(n, crc_encoding_twobytes, false),              \
+		.tx_address = DT_INST_PROP(n, tx_address),                                              \
+		.payload_fixed_size = DT_INST_PROP_OR(n, payload_fixed_size, 32),                       \
+		.dynamic_payload = DT_INST_PROP_OR(n, dynamic_payload, false),                          \
+		.payload_ack = DT_INST_PROP_OR(n, payload_ack, false),                                  \
+		.payload_crc = DT_INST_PROP_OR(n, payload_crc, false),                                  \
+		.rx_datapipes_number = DT_INST_PROP(n, rx_datapipes_number),                            \
+		.rx_datapipe0_address = DT_INST_PROP(n, rx_datapipe0_address),                          \
+		.rx_datapipe1_address = DT_INST_PROP(n, rx_datapipe1_address),                          \
+		.is_listening = false,                                                                  \
+		.write_ret_code = 0,                                                                    \
+		.rx_child_datapipes_addresses = {                                                       \
+			DT_INST_PROP(n, rx_datapipe2_address),                                          \
+			DT_INST_PROP(n, rx_datapipe3_address),                                          \
+			DT_INST_PROP(n, rx_datapipe4_address),                                          \
+			DT_INST_PROP(n, rx_datapipe5_address)},                                         \
+		.rx_datapipes_dynamic_payload = DT_INST_PROP_OR(n,                                      \
+				rx_datapipes_dynamic_payload, {}),                                      \
+                };                                                                                      \
+        static const struct nrf24l01_config dev_config_##n = {                                          \
+                .spi = SPI_DT_SPEC_INST_GET(n, NRF24L01_SPI_MODE ),                                     \
+                .ce = GPIO_DT_SPEC_INST_GET(n, ce_gpios),                                               \
+                .csn = GPIO_DT_SPEC_INST_GET(n,csn_gpios),                                              \
+                .irq = GPIO_DT_SPEC_INST_GET(n, irq_gpios),                                             \
+                        };                                                                              \
+        DEVICE_DT_INST_DEFINE(n, &nrf24l01_init, NULL, &dev_data_##n, &dev_config_##n, POST_KERNEL,     \
                         CONFIG_RF_INIT_PRIORITY, &nrf24l01_api);
 
 DT_INST_FOREACH_STATUS_OKAY(NRF24L01_DEVICE_INIT)
