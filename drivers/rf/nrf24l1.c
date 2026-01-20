@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include "zephyr/types.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#define DT_DRV_COMPAT nordic_nrf24l1
+#define DT_DRV_COMPAT nordic_nrf24l01
 
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
@@ -23,7 +24,7 @@
 #define SPI_MAX_REG_LEN 5
 #define SPI_MSG_QUEUE_LEN 10
 
-LOG_MODULE_REGISTER(nrf24l1, CONFIG_RF_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf24l01, CONFIG_RF_LOG_LEVEL);
 
 struct nrf24l01_config {
         struct spi_dt_spec spi;
@@ -60,6 +61,8 @@ struct nrf24l01_data {
         struct k_work trig_work;
         /** Touch GPIO callback. */
         struct gpio_callback irq_cb;
+        /** API async callback */
+        rf_recv_cb      async_recv_cb;
         /** Semaphore for TX. */
         struct k_sem sem;
         /** Self reference (used in work queue context). */
@@ -822,6 +825,7 @@ void work_queue_callback_handler(struct k_work *item)
                 if (data->is_listening)
                 { // Not an ACK interrupt
                         nrf24l01_read_payload(dev, buffer, size);
+                        data->async_recv_cb(dev, buffer, sizeof(buffer));
                         if (k_msgq_put(&data->rx_queue, buffer, K_NO_WAIT) < 0) {
                                 LOG_WRN("RX queue full, dropping packet");
                         }
@@ -876,10 +880,20 @@ int nrf24l01_send_async(const struct device *dev,
 }
 
 
-int nrf24l01_recv_async(const struct device *dev, rf_recv_cb cb,
-                void *user_data)
+int nrf24l01_recv_async(const struct device *dev, rf_recv_cb cb)
 {
+
+#ifdef CONFIG_NRF24L01_TRIGGER
+        struct nrf24l01_data *data = dev->data;
+
+        if (cb != NULL)
+        {
+                data->async_recv_cb = cb;
+        }
         return 0;
+#else
+        return -ENOTSUP;
+#endif
 }
 
 int nrf24l01_init(const struct device *dev)

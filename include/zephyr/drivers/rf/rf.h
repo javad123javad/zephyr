@@ -109,8 +109,7 @@ struct rf_modem_config {
  *
  * @see rf_recv() for argument descriptions.
  */
-typedef void (*rf_recv_cb)(const struct device *dev, uint8_t *data, uint16_t size,
-			     int16_t rssi, int8_t snr, void *user_data);
+typedef void (*rf_recv_cb)(const struct device *dev, uint8_t *data, uint16_t size);
 
 /**
  * @typedef rf_api_config()
@@ -156,8 +155,7 @@ typedef int (*rf_api_recv)(const struct device *dev, uint8_t *data,
  * @param dev Modem to receive data on.
  * @param cb Callback to run on receiving data.
  */
-typedef int (*rf_api_recv_async)(const struct device *dev, rf_recv_cb cb,
-			     void *user_data);
+typedef int (*rf_api_recv_async)(const struct device *dev, rf_recv_cb cb);
 
 __subsystem struct rf_driver_api {
 	rf_api_config config;
@@ -279,20 +277,17 @@ static inline int z_impl_rf_recv(const struct device *dev, uint8_t *data,
  * @param dev Modem to receive data on.
  * @param cb Callback to run on receiving data. If NULL, any pending
  *	     asynchronous receptions will be cancelled.
- * @param user_data User data passed to callback
  * @return 0 when reception successfully setup, negative on error
  */
 
-__syscall int rf_recv_async(const struct device *dev, rf_recv_cb cb,
-			       void *user_data);
+__syscall int rf_recv_async(const struct device *dev, rf_recv_cb cb);
 
-static inline int z_impl_rf_recv_async(const struct device *dev, rf_recv_cb cb,
-			       void *user_data)
+static inline int z_impl_rf_recv_async(const struct device *dev, rf_recv_cb cb)
 {
 	const struct rf_driver_api *api =
 		(const struct rf_driver_api *)dev->api;
 
-	return api->recv_async(dev, cb, user_data);
+	return api->recv_async(dev, cb);
 }
 
 

@@ -4,17 +4,37 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-config NORDIC_NRF24L1
+config NORDIC_NRF24L01
         bool "Nordic NRF24L1 RF module"
         default y
-        depends on DT_HAS_NORDIC_NRF24L1_ENABLED
+        depends on DT_HAS_NORDIC_NRF24L01_ENABLED
         select GPIO
         select SPI
         help
-          Enable the Nordic NRF24L1 driver
+          Enable the Nordic NRF24L01 driver
 
-if NORDIC_NRF24L1
+if NORDIC_NRF24L01
 
-endif   # NORDIC_NRF24L1
+config NRF24L01_TRIGGER
+	bool "NRF24 trigger with irq gpio"
+	depends on NORDIC_NRF24L01
+	help
+	  When enabled, the NRF24L01 read is triggered by irq gpio and
+	  not by polling.
+
+config NRF24L01_READ_TIMEOUT
+	int "Timout for read operation"
+	depends on NRF24L01_TRIGGER
+	default 1000
+	help
+	  nRF24 timeout for reading, in ms.
+
+config NRF24L01_WRITE_TIMEOUT
+	int "Timout for write operation"
+	depends on NRF24L01_TRIGGER
+	default 100
+	help
+	  nRF24 timeout for writing, in ms.
+endif   # NORDIC_NRF24L01
 
 
