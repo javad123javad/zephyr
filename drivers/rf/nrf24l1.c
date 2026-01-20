@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <asm-generic/errno-base.h>
 #define DT_DRV_COMPAT nordic_nrf24l01
 
 #include <zephyr/logging/log.h>
@@ -61,7 +62,7 @@ struct nrf24l01_data {
         struct k_work trig_work;
         /** Touch GPIO callback. */
         struct gpio_callback irq_cb;
-        /** API async callback */
+        /** API async receive callback */
         rf_recv_cb      async_recv_cb;
         /** Semaphore for TX. */
         struct k_sem sem;
@@ -876,7 +877,22 @@ int nrf24l01_send_async(const struct device *dev,
                 uint8_t *data, uint32_t data_len,
                 struct k_poll_signal *async)
 {
-        return 0;
+#if CONFIG_NRF24L01_TRIGGER
+        //struct nrf24l01_data *nrfdata = dev->data;
+        int ret = 0;
+        if(async)
+        {
+                ret = nrf24l01_write(dev, data, data_len);
+                return k_poll_signal_raise(async, ret);
+        }
+        else {
+                return -EINVAL;
+        }
+
+#else
+        return -ENOTSUP;
+#endif
+
 }
 
 
