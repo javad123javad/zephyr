@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <asm-generic/errno-base.h>
 #define DT_DRV_COMPAT nordic_nrf24l01
 
 #include <zephyr/logging/log.h>
@@ -727,6 +726,7 @@ static int nrf24l01_write(const struct device *dev, uint8_t *buffer, uint8_t dat
                 return -ETIME;
         }
         ret = (int)data->write_ret_code;
+        LOG_INF("Write Ret: %d\n", ret);
 #else // not CONFIG_NRF24L01_TRIGGER
       // Wait for status bits TX_DS or MAX_RT to be asserted
         while( !(nrf24l01_get_register_bit(dev, NRF_STATUS, TX_DS) |
@@ -836,7 +836,7 @@ void work_queue_callback_handler(struct k_work *item)
         }
         else if (ret & BIT(TX_DS))
         {
-                LOG_DBG("TX OK!");
+                LOG_INF("TX OK!");
                 nrf24l01_toggle_ce(dev, LOW);
                 // free semaphore
                 data->write_ret_code = 0;
@@ -846,7 +846,7 @@ void work_queue_callback_handler(struct k_work *item)
         else if (ret & BIT(MAX_RT))
         {
                 // If nobody receives the message, we end up here
-                LOG_DBG("TX not acked");
+                LOG_INF("TX not acked");
                 nrf24l01_toggle_ce(dev, LOW);
                 // Max retries exceeded, flush TX
                 nrf24l01_cmd_register(dev, FLUSH_TX);
@@ -1080,7 +1080,6 @@ static const struct rf_driver_api nrf24l01_api = {
         static const struct nrf24l01_config dev_config_##n = {                                          \
                 .spi = SPI_DT_SPEC_INST_GET(n, NRF24L01_SPI_MODE ),                                     \
                 .ce = GPIO_DT_SPEC_INST_GET(n, ce_gpios),                                               \
-                .csn = GPIO_DT_SPEC_INST_GET(n,csn_gpios),                                              \
                 .irq = GPIO_DT_SPEC_INST_GET(n, irq_gpios),                                             \
                         };                                                                              \
         DEVICE_DT_INST_DEFINE(n, &nrf24l01_init, NULL, &dev_data_##n, &dev_config_##n, POST_KERNEL,     \

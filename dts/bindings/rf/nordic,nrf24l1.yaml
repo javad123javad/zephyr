@@ -15,13 +15,6 @@ properties:
 
       This signal is open-drain, active-high (NRF24L01).
 
-  csn-gpios:
-    type: phandle-array
-    required: true
-    description: |
-      Chip enable pin.
-
-      These signals are normally active-high.
   irq-gpios:
     type: phandle-array
     required: true
