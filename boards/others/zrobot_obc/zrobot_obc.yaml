@@ -1,0 +1,15 @@
+identifier:zrobot_obc 
+name: ZROBOT OBC F407VE Development Board
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+ram: 128
+flash: 512
+supported:
+  - can
+  - pwm
+  - counter
+  - spi
+  - gpio

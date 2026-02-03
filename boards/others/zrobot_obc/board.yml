@@ -1,0 +1,6 @@
+board:
+  name: zrobot_obc
+  full_name: zrobot obc  F407VE Development Board
+  vendor: others
+  socs:
+    - name: stm32f407xx
