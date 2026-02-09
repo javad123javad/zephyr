@@ -22,16 +22,15 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
     DEALINGS IN THE SOFTWARE.
 */
-#define LOW false
+#define LOW  false
 #define HIGH true
 
 /* Booleans for IRQ */
-#define CLEARED true
+#define CLEARED   true
 #define TRIGGERED false
 
-
 /* Memory Map */
-#define NRF_CONFIG      0x00
+#define NRF_CONFIG  0x00
 #define EN_AA       0x01
 #define EN_RXADDR   0x02
 #define SETUP_AW    0x03
@@ -55,8 +54,8 @@
 #define RX_PW_P4    0x15
 #define RX_PW_P5    0x16
 #define FIFO_STATUS 0x17
-#define DYNPD	    0x1C
-#define FEATURE	    0x1D
+#define DYNPD       0x1C
+#define FEATURE     0x1D
 
 /* Bit Mnemonics */
 #define MASK_RX_DR  6
@@ -96,13 +95,13 @@
 #define TX_EMPTY    4
 #define RX_FULL     1
 #define RX_EMPTY    0
-#define DPL_P5	    5
-#define DPL_P4	    4
-#define DPL_P3	    3
-#define DPL_P2	    2
-#define DPL_P1	    1
-#define DPL_P0	    0
-#define EN_DPL	    2
+#define DPL_P5      5
+#define DPL_P4      4
+#define DPL_P3      3
+#define DPL_P2      2
+#define DPL_P1      1
+#define DPL_P0      0
+#define EN_DPL      2
 #define EN_ACK_PAY  1
 #define EN_DYN_ACK  0
 
@@ -122,11 +121,11 @@
 #define RF24_READSTAT 0xFF // Shortcut to read status
 
 /* Non-P omissions */
-#define LNA_HCURR   0
+#define LNA_HCURR 0
 
 /* P model memory Map */
-#define RPD         0x09
-#define W_TX_PAYLOAD_NO_ACK  0xB0
+#define RPD                 0x09
+#define W_TX_PAYLOAD_NO_ACK 0xB0
 
 /* P model bit Mnemonics */
 #define RF_DR_LOW   5
@@ -134,10 +133,7 @@
 #define RF_PWR_LOW  1
 #define RF_PWR_HIGH 2
 
-static const uint8_t child_pipe_enable_bit[]  =
-{
-	ERX_P0, ERX_P1, ERX_P2, ERX_P3, ERX_P4, ERX_P5
-};
+static const uint8_t child_pipe_enable_bit[] = {ERX_P0, ERX_P1, ERX_P2, ERX_P3, ERX_P4, ERX_P5};
 
 /**
  * Power Amplifier level.
@@ -150,7 +146,7 @@ typedef enum {
 	RF24_PA_HIGH,
 	RF24_PA_MAX,
 	RF24_PA_ERROR
-} rf24_pa_dbm_e ;
+} rf24_pa_dbm_e;
 
 /**
  * Data rate.  How fast data moves through the air.
