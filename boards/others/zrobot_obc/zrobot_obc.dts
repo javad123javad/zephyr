@@ -16,6 +16,7 @@
 	chosen {
 		zephyr,console = &usart1;
 		zephyr,shell-uart = &usart1;
+                zephyr,modem-uart = &usart2;
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
 		zephyr,dtcm = &ccm0;
@@ -96,7 +97,7 @@
 	status = "okay";
 };
 
-&usart2 {
+gps_usart:&usart2 {
 	pinctrl-0 = <&usart2_tx_pd5 &usart2_rx_pd6>;
 	pinctrl-names = "default";
 	status = "okay";
@@ -158,8 +159,8 @@ zephyr_udc0: &usbotg_fs {
 		spi-max-frequency = <500000>;// This really sets frequency
 		ce-gpios = <&gpiob 13 GPIO_ACTIVE_HIGH>;
 		irq-gpios = <&gpiob 11 GPIO_ACTIVE_LOW>;
-		channel-frequency = <16>;
-		rf-power-attenuation = <10>;
+		channel-frequency = <90>;
+		rf-power-attenuation = <0>;
 		lna-gain;
 		tx-address = [e7 e7 e7 e7];
 		payload-fixed-size = <32>;
