@@ -1,5 +1,6 @@
 board:
   name: bluepill_stm32f103c8t6
-  vendor: st
+  full_name: Blue Pill
+  vendor: weact
   socs:
     - name: stm32f103xb

@@ -8,7 +8,6 @@ add_subdirectory(simcom)
 add_subdirectory_ifdef(CONFIG_MODEM_HL78XX hl78xx)
 
 # zephyr-keep-sorted-start
-=======
 if(CONFIG_MODEM_UBLOX_SARA)
 	zephyr_library_sources(ublox-sara-r4.c)
 endif()
