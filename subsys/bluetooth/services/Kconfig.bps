@@ -1,0 +1,7 @@
+config BT_BPS
+    bool "Blood Pressure Service (BPS)"
+    help
+      Enable the Bluetooth Blood Pressure Service (BPS).
+      Implements the Bluetooth SIG BPS 1.0 specification
+      with Blood Pressure Measurement, and Blood Pressure
+      Feature characteristics.

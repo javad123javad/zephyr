@@ -2,6 +2,8 @@
 
 zephyr_sources_ifdef(CONFIG_BT_ANS ans.c)
 
+zephyr_sources_ifdef(CONFIG_BT_BPS bps.c)
+
 zephyr_sources_ifdef(CONFIG_BT_DIS dis.c)
 
 zephyr_sources_ifdef(CONFIG_BT_GAP_SVC gap_svc.c)

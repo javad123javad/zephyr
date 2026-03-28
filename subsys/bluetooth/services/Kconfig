@@ -8,6 +8,8 @@ menu "GATT Services"
 
 rsource "Kconfig.ans"
 
+rsource "Kconfig.bps"
+
 rsource "Kconfig.dis"
 
 rsource "Kconfig.gap_svc"
