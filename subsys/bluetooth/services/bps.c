@@ -16,6 +16,7 @@
 #include <zephyr/init.h>
 #include <zephyr/sys/check.h>
 #include <zephyr/sys/byteorder.h>
+#include <zephyr/net_buf.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/hci.h>
@@ -122,9 +123,9 @@ int bt_bps_cb_unregister(struct bt_bps_cb *cb)
 
 int bt_bps_indicate(const struct bt_bps_measurement *meas)
 {
-	static uint8_t buf[9]; /* flags(1) + sys(2) + dia(2) + map(2) + pr(2) */
-	uint8_t *p = buf;
 	uint8_t flags = 0U;
+        NET_BUF_SIMPLE_DEFINE(buf,9);
+        net_buf_simple_init(&buf,0);
 
         if(!ind_enabled){
                 return -EACCES;
@@ -136,22 +137,22 @@ int bt_bps_indicate(const struct bt_bps_measurement *meas)
 		flags |= BPS_FLAG_PULSE_RATE;
 	}
 
-	*p++ = flags;
+        net_buf_simple_add_u8(&buf, flags);
 
 	/* Systolic, Diastolic, MAP - pre-encoded SFLOAT, little-endian */
-	sys_put_le16(meas->systolic,  p); p += 2;
-	sys_put_le16(meas->diastolic, p); p += 2;
-	sys_put_le16(meas->map,       p); p += 2;
 
+        net_buf_simple_add_le16(&buf, meas->systolic);
+        net_buf_simple_add_le16(&buf, meas->diastolic);
+        net_buf_simple_add_le16(&buf, meas->map);
 	if (meas->pulse_rate_present) {
-		sys_put_le16(meas->pulse_rate, p); p += 2;
+                net_buf_simple_add_le16(&buf, meas->pulse_rate);
 	}
 
 	ind_params.attr    = &bps_svc.attrs[1];
 	ind_params.func    = indicate_cb;
 	ind_params.destroy = NULL;
-	ind_params.data    = buf;
-	ind_params.len     = (uint16_t)(p - buf);
+	ind_params.data    = buf.data;
+	ind_params.len     = buf.len;
 
 	return bt_gatt_indicate(NULL, &ind_params);
 }
