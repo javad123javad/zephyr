@@ -215,12 +215,14 @@ stm32_lp_tick_source: &lptim1 {
 		compatible = "st,iis2mdc";
 		reg = <0x1e>;
 		drdy-gpios = <&gpiod 10 GPIO_ACTIVE_HIGH>;
+		status="okay";
 	};
 
-	ism330dhcx@6b {
+	ism330dhcx:ism330dhcx@6b {
 		compatible = "st,ism330dhcx";
 		reg = <0x6b>;
 		drdy-gpios = <&gpioe 11 GPIO_ACTIVE_HIGH>;
+		status="okay";
 	};
 
 	lps22hh@5d {

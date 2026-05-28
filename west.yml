@@ -415,6 +415,12 @@ manifest:
     - name: zcbor
       revision: 9164bd18dcd88ff9d9ef98279501fc1093571017
       path: modules/lib/zcbor
+    - name: edge-impulse-sdk-zephyr
+      description: Edge Impulse SDK for Zephyr
+      path: modules/edge-impulse-sdk-zephyr
+      west-commands: west/west-commands.yml
+      revision: v1.93.3
+      url: https://github.com/edgeimpulse/edge-impulse-sdk-zephyr
   # zephyr-keep-sorted-stop
 
   self:
