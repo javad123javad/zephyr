@@ -87,6 +87,8 @@ int main(void)
 		printf("Failed to configure I2S stream\n");
 		return ret;
 	}
+while(1)
+        {
 
 	/* Prepare all TX blocks */
 	for (tx_idx = 0; tx_idx < NUM_BLOCKS; tx_idx++) {
@@ -98,8 +100,7 @@ int main(void)
 		}
 		fill_buf((uint16_t *)tx_block[tx_idx], tx_idx % 3);
 	}
-
-	tx_idx = 0;
+        	tx_idx = 0;
 	/* Send first block */
 	ret = i2s_write(dev_i2s, tx_block[tx_idx++], BLOCK_SIZE);
 	if (ret < 0) {
@@ -126,6 +127,7 @@ int main(void)
 		printf("Could not trigger I2S tx\n");
 		return ret;
 	}
+        }
 	printf("All I2S blocks written\n");
 	return 0;
 }

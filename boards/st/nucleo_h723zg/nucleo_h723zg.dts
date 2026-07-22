@@ -127,7 +127,11 @@
 &pwr {
 	power-supply = "ldo";
 };
-
+&i2s1{
+	status = "okay";
+	pinctrl-0 = <&i2s1_ck_pa5 &i2s1_mck_pc4 &i2s1_sdi_pa6 &i2s1_sdo_pa7 &i2s1_ws_pa4>;
+	pinctrl-names = "default";
+};
 &lpuart1 {
 	pinctrl-0 = <&lpuart1_tx_pb6 &lpuart1_rx_pb7>;
 	pinctrl-names = "default";
@@ -142,7 +146,7 @@
 	status = "okay";
 };
 
-&usart2 {
+testio:&usart2 {
 	pinctrl-0 = <&usart2_tx_pd5 &usart2_rx_pd6>;
 	pinctrl-names = "default";
 	current-speed = <115200>;
@@ -169,6 +173,11 @@
 	sda-gpios = <&gpiob 9 GPIO_ACTIVE_HIGH>;
 	status = "okay";
 	clock-frequency = <I2C_BITRATE_FAST>;
+        bme280@76 {
+                compatible = "bosch,bme280";
+                reg = <0x76>;
+                status = "okay";
+        };
 };
 
 &backup_sram {
