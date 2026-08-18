@@ -257,7 +257,7 @@ zephyr_udc0: &usbotg_hs1 {
 };
 
 &mac {
-	status = "disabled";
+	status = "okay";
 	pinctrl-0 = <&eth1_rmii_ref_clk_pf7
 		     &eth1_rmii_crs_dv_pf10
 		     &eth1_rmii_rxd0_pf14
@@ -284,8 +284,8 @@ zephyr_udc0: &usbotg_hs1 {
 };
 
 &mdio {
-	status = "disabled";
-	pinctrl-0 = <&eth1_mdio_pf4 &eth1_mdc_pg11>;
+	status = "okay";
+	pinctrl-0 = <&eth1_mdio_pd12 &eth1_mdc_pd1>;
 	pinctrl-names = "default";
 
 	eth_phy: ethernet-phy@0 {
