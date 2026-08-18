@@ -17,24 +17,24 @@
 		zephyr,shell-uart = &usart1;
 		zephyr,sram = &axisram2;
 		zephyr,canbus = &fdcan1;
-		spi-flash0 = &mx25um51245g;
+		spi-flash0 = &w25q64jv;
 	};
 
 	leds: leds {
 		compatible = "gpio-leds";
 
 		green_led: led_1 {
-			gpios = <&gpiog 0 GPIO_ACTIVE_LOW>;
+			gpios = <&gpioa 1 GPIO_ACTIVE_LOW>;
 			label = "User LD6";
 		};
 
 		blue_led: led_2 {
-			gpios = <&gpiog 8 GPIO_ACTIVE_LOW>;
+			gpios = <&gpioa 4 GPIO_ACTIVE_LOW>;
 			label = "User LD7";
 		};
 
 		red_led: led_3 {
-			gpios = <&gpiog 10 GPIO_ACTIVE_LOW>;
+			gpios = <&gpioa 2 GPIO_ACTIVE_LOW>;
 			label = "User LD5";
 		};
 	};
@@ -98,7 +98,7 @@
 };
 
 &clk_lse {
-	status = "okay";
+	status = "disabled";
 };
 
 &pll1 {
@@ -182,7 +182,7 @@
 	pinctrl-0 = <&adc1_inp10_pa9 &adc1_inp11_pa10>; /* Arduino A1 & A2 */
 	pinctrl-names = "default";
 	vref-mv = <1800>;
-	status = "okay";
+	status = "disabled";
 };
 
 &fdcan1 {
@@ -190,7 +190,7 @@
 		 <&rcc STM32_SRC_CKPER FDCAN_SEL(1)>;
 	pinctrl-0 = <&fdcan1_rx_pd0 &fdcan1_tx_ph2>;
 	pinctrl-names = "default";
-	status = "okay";
+	status = "disabled";
 };
 
 &i2c1 {
@@ -201,7 +201,7 @@
 	scl-gpios = <&gpioh 9 GPIO_ACTIVE_HIGH>;
 	sda-gpios = <&gpioc 1 GPIO_ACTIVE_HIGH>;
 	clock-frequency = <I2C_BITRATE_STANDARD>;
-	status = "okay";
+	status = "disabled";
 };
 
 csi_i2c: &i2c2 {
@@ -212,7 +212,7 @@ csi_i2c: &i2c2 {
 	scl-gpios = <&gpiob 10 GPIO_ACTIVE_HIGH>;
 	sda-gpios = <&gpiob 11 GPIO_ACTIVE_HIGH>;
 	clock-frequency = <I2C_BITRATE_STANDARD>;
-	status = "okay";
+	status = "disabled";
 };
 
 &i2c4 {
@@ -223,7 +223,7 @@ csi_i2c: &i2c2 {
 	scl-gpios = <&gpioe 13 GPIO_ACTIVE_HIGH>;
 	sda-gpios = <&gpioe 14 GPIO_ACTIVE_HIGH>;
 	clock-frequency = <I2C_BITRATE_STANDARD>;
-	status = "okay";
+	status = "disabled";
 };
 
 &spi5 {
@@ -231,7 +231,7 @@ csi_i2c: &i2c2 {
 		 <&rcc STM32_SRC_CKPER SPI5_SEL(1)>;
 	pinctrl-0 = <&spi5_nss_pa3 &spi5_sck_pe15 &spi5_miso_pg1 &spi5_mosi_pg2>;
 	pinctrl-names = "default";
-	status = "okay";
+	status = "disabled";
 };
 
 &usart1 {
@@ -249,15 +249,15 @@ csi_i2c: &i2c2 {
 	pinctrl-0 = <&usart3_tx_pd8 &usart3_rx_pd9>;
 	pinctrl-names = "default";
 	current-speed = <115200>;
-	status = "okay";
+	status = "disabled";
 };
 
 zephyr_udc0: &usbotg_hs1 {
-	status = "okay";
+	status = "disabled";
 };
 
 &mac {
-	status = "okay";
+	status = "disabled";
 	pinctrl-0 = <&eth1_rmii_ref_clk_pf7
 		     &eth1_rmii_crs_dv_pf10
 		     &eth1_rmii_rxd0_pf14
@@ -284,7 +284,7 @@ zephyr_udc0: &usbotg_hs1 {
 };
 
 &mdio {
-	status = "okay";
+	status = "disabled";
 	pinctrl-0 = <&eth1_mdio_pf4 &eth1_mdc_pg11>;
 	pinctrl-names = "default";
 
@@ -299,22 +299,21 @@ zephyr_udc0: &usbotg_hs1 {
 	status = "okay";
 };
 
-&xspi2 {
-	pinctrl-0 = <&xspim_p2_ncs1_pn1 &xspim_p2_dqs0_pn0 &xspim_p2_clk_pn6
+&xspi1 {
+	pinctrl-0 = <&xspim_p2_ncs1_pn1 &xspim_p2_clk_pn6
 		     &xspim_p2_io0_pn2 &xspim_p2_io1_pn3 &xspim_p2_io2_pn4
-		     &xspim_p2_io3_pn5 &xspim_p2_io4_pn8 &xspim_p2_io5_pn9
-		     &xspim_p2_io6_pn10 &xspim_p2_io7_pn11>;
+		     &xspim_p2_io3_pn5>;
 	pinctrl-names = "default";
 	status = "okay";
 
-	mx25um51245g: ospi-nor-flash@0 {
+	w25q64jv: qspi-nor-flash@0 {
 		compatible = "st,stm32-xspi-nor";
 		reg = <0>;
-		size = <DT_SIZE_M(512)>; /* 512 Mbits */
-		ospi-max-frequency = <DT_FREQ_M(200)>;
-		spi-bus-width = <XSPI_OCTO_MODE>;
-		data-rate = <XSPI_DTR_TRANSFER>;
-		four-byte-opcodes;
+		size = <DT_SIZE_M(64)>; /* 64  Mbits */
+		ospi-max-frequency = <DT_FREQ_M(50)>;
+		spi-bus-width = <XSPI_QUAD_MODE>;
+		data-rate = <XSPI_STR_TRANSFER>;
+//		four-byte-opcodes;
 		status = "okay";
 
 		partitions {
@@ -342,10 +341,10 @@ zephyr_udc0: &usbotg_hs1 {
 };
 
 &iocell {
-	status = "okay";
+	status = "disabled";
 
 	vddio3 {
-		hslv-mode = "on";
+		hslv-mode = "off";
 		compensation-enabled;
 	};
 };
@@ -369,5 +368,5 @@ csi_capture_port: &pipe_main {};
 &rtc {
 	clocks = <&rcc STM32_CLOCK(APB4, 16)>,
 		 <&rcc STM32_SRC_LSE RTC_SEL(1)>;
-	status = "okay";
+	status = "disabled";
 };
