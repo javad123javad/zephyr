@@ -137,7 +137,7 @@
 	timg-prescaler = <2>;
 };
 
-&i2c1 {
+io_cnf_i2c:&i2c1 {
 	clocks = <&rcc STM32_CLOCK(APB1, 21)>,
 		 <&rcc STM32_SRC_CKPER I2C1_SEL(1)>;
 	pinctrl-0 = <&i2c1_scl_ph9 &i2c1_sda_pc1>;
@@ -145,40 +145,37 @@
 	scl-gpios = <&gpioh 9 GPIO_ACTIVE_HIGH>;
 	sda-gpios = <&gpioc 1 GPIO_ACTIVE_HIGH>;
 	clock-frequency = <I2C_BITRATE_STANDARD>;
-	status = "disabled";
+	status = "okay";
 };
 
-csi_i2c: &i2c2 {
+io_i2c: &i2c2 {
 	clocks = <&rcc STM32_CLOCK(APB1, 22)>,
 		 <&rcc STM32_SRC_CKPER I2C2_SEL(1)>;
-	pinctrl-0 = <&i2c2_scl_pb10 &i2c2_sda_pb11>;
+	pinctrl-0 = <&i2c2_scl_pd14 &i2c2_sda_pd15>;
 	pinctrl-names = "default";
-	scl-gpios = <&gpiob 10 GPIO_ACTIVE_HIGH>;
-	sda-gpios = <&gpiob 11 GPIO_ACTIVE_HIGH>;
+	scl-gpios = <&gpiod 10 GPIO_ACTIVE_HIGH>;
+	sda-gpios = <&gpiod 11 GPIO_ACTIVE_HIGH>;
 	clock-frequency = <I2C_BITRATE_STANDARD>;
-	status = "disabled";
+	status = "okay";
 };
 
-&i2c4 {
-	clocks = <&rcc STM32_CLOCK(APB4, 7)>,
-		 <&rcc STM32_SRC_CKPER I2C4_SEL(1)>;
-	pinctrl-0 = <&i2c4_scl_pe13 &i2c4_sda_pe14>;
+io_spi:&spi2 {
+	clocks = <&rcc STM32_CLOCK(APB1, 14)>,
+		 <&rcc STM32_SRC_CKPER SPI2_SEL(1)>;
+	pinctrl-0 = <&spi2_nss_pa11 &spi2_sck_pf2 &spi2_miso_pd6 &spi2_mosi_pd2>;
 	pinctrl-names = "default";
-	scl-gpios = <&gpioe 13 GPIO_ACTIVE_HIGH>;
-	sda-gpios = <&gpioe 14 GPIO_ACTIVE_HIGH>;
-	clock-frequency = <I2C_BITRATE_STANDARD>;
-	status = "disabled";
+	status = "okay";
 };
 
-&spi5 {
-	clocks = <&rcc STM32_CLOCK(APB2, 20)>,
-		 <&rcc STM32_SRC_CKPER SPI5_SEL(1)>;
-	pinctrl-0 = <&spi5_nss_pa3 &spi5_sck_pe15 &spi5_miso_pg1 &spi5_mosi_pg2>;
-	pinctrl-names = "default";
-	status = "disabled";
+io_i2s:&i2s1 {
+        clocks = <&rcc STM32_CLOCK(APB2, 12)>,
+                 <&rcc STM32_SRC_CKPER SPI1_SEL(1)>;
+        pinctrl-0 = <&i2s1_ws_pa15 &i2s1_sdo_pb5 &i2s1_sdi_pb8 &i2s1_ck_pb9>;
+        pinctrl-names = "default";
+        status = "okay";
 };
 
-&usart1 {
+io_debug:&usart1 {
 	clocks = <&rcc STM32_CLOCK(APB2, 4)>,
 		 <&rcc STM32_SRC_CKPER USART1_SEL(1)>;
 	pinctrl-0 = <&usart1_tx_pe5 &usart1_rx_pe6>;
@@ -187,17 +184,41 @@ csi_i2c: &i2c2 {
 	status = "okay";
 };
 
-&usart3 {
+io_uart:&usart2 {
+        clocks = <&rcc STM32_CLOCK(APB1, 17)>,
+                 <&rcc STM32_SRC_CKPER USART2_SEL(1)>;
+        pinctrl-0 = <&usart2_tx_pg3 &usart2_rx_pf6>;
+        pinctrl-names = "default";
+        current-speed = <115200>;
+        status = "okay";
+};
+
+io_rs485_uart:&usart3 {
 	clocks = <&rcc STM32_CLOCK(APB1, 18)>,
 		 <&rcc STM32_SRC_CKPER USART3_SEL(1)>;
-	pinctrl-0 = <&usart3_tx_pd8 &usart3_rx_pd9>;
+	pinctrl-0 = <&usart3_tx_pb10 &usart3_rx_pb11  &usart3_de_pg2>;
 	pinctrl-names = "default";
 	current-speed = <115200>;
-	status = "disabled";
+	de-enable;
+	status = "okay";
+};
+
+esp_wifi_uart:&usart6 {
+        clocks = <&rcc STM32_CLOCK(APB2, 5)>,
+                 <&rcc STM32_SRC_CKPER USART6_SEL(1)>;
+        pinctrl-0 = <&usart6_tx_pc6 &usart6_rx_pc7  &usart6_cts_pb13 &usart6_rts_pb15>;
+        pinctrl-names = "default";
+        current-speed = <115200>;
+        de-enable;
+        status = "okay";
 };
 
 zephyr_udc0: &usbotg_hs1 {
-	status = "disabled";
+	status = "okay";
+};
+
+zephyr_udc1: &usbotg_hs2 {
+        status = "okay";
 };
 
 &mac {
@@ -282,15 +303,6 @@ zephyr_udc0: &usbotg_hs1 {
 &bsec {
 	/* Required by "iocell" and "ethernet" drivers */
 	status = "okay";
-};
-
-&iocell {
-	status = "disabled";
-
-	vddio3 {
-		hslv-mode = "off";
-		compensation-enabled;
-	};
 };
 
 &rng {
