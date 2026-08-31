@@ -598,6 +598,13 @@ MODEM_CMD_DEFINE(on_cmd_wifi_connected)
 	struct esp_data *dev = CONTAINER_OF(data, struct esp_data,
 					    cmd_handler_data);
 
+	/*
+	 * Bump the generation on every URC, even a deduped one below: a
+	 * disconnect that raced with this connect must be recognized as
+	 * stale once it is finally processed.
+	 */
+	dev->sta_gen++;
+
 	if (esp_flags_are_set(dev, EDF_STA_CONNECTED)) {
 		return 0;
 	}
@@ -615,6 +622,11 @@ static void esp_mgmt_disconnect_work(struct k_work *work)
 	struct esp_data *dev;
 
 	dev = CONTAINER_OF(work, struct esp_data, disconnect_work);
+
+	if (dev->disconnect_gen != dev->sta_gen) {
+		/* A newer connection has taken over; this disconnect is stale. */
+		return;
+	}
 
 	/* Cleanup any sockets that weren't closed */
 	for (int i = 0; i < ARRAY_SIZE(dev->sockets); i++) {
@@ -643,6 +655,7 @@ MODEM_CMD_DEFINE(on_cmd_wifi_disconnected)
 					    cmd_handler_data);
 
 	if (esp_flags_are_set(dev, EDF_STA_CONNECTED)) {
+		dev->disconnect_gen = dev->sta_gen;
 		k_work_submit_to_queue(&dev->workq, &dev->disconnect_work);
 	}
 
