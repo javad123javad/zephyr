@@ -1,0 +1,8 @@
+board:
+  name: mindos_n6
+  full_name: MindOS N657L0 MCU Board
+  vendor: st
+  socs:
+    - name: stm32n657xx
+      variants:
+        - name: sb
