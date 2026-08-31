@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2025 STMicroelectronics
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+#include "mindos_n6_common.dtsi"
+
+/ {
+	model = "MindOS STM32N657L0 MCU board";
+	compatible = "st,stm32n657x0-mindos-sb";
+};
+
+&xspim {
+	io-port-2 = <&xspi2>;
+	status = "okay";
+};
