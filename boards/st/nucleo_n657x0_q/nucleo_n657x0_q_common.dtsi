@@ -206,7 +206,7 @@ io_rs485_uart:&usart3 {
 esp_wifi_uart:&usart6 {
         clocks = <&rcc STM32_CLOCK(APB2, 5)>,
                  <&rcc STM32_SRC_CKPER USART6_SEL(1)>;
-        pinctrl-0 = <&usart6_tx_pc6 &usart6_rx_pc7>;
+        pinctrl-0 = <&usart6_tx_pc6 &usart6_rx_pc7 &usart6_cts_pb13 &usart6_rts_pb15>;
 	        pinctrl-names = "default";
         current-speed = <115200>;
         status = "okay";
