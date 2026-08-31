@@ -220,6 +220,14 @@ struct esp_data {
 	uint8_t flags;
 	uint8_t mode;
 
+	/*
+	 * sta_gen counts real STA connect transitions; disconnect_gen snapshots
+	 * it when disconnect_work is scheduled, so a stale disconnect can be
+	 * detected and skipped if a newer connection took over meanwhile.
+	 */
+	uint32_t sta_gen;
+	uint32_t disconnect_gen;
+
 	char conn_cmd[CONN_CMD_MAX_LEN];
 	enum wifi_conn_status conn_status;
 
