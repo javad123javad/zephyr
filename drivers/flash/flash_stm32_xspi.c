@@ -2231,6 +2231,30 @@ static int flash_stm32_xspi_init(const struct device *dev)
 
 	LOG_DBG("XSPI Init'd");
 
+	if (dev_cfg->xspim_io_port != 0) {
+		/*
+		 * This controller is wired to a physical XSPIM port other than
+		 * its own default (e.g. xspi1 wired to port 2): the crossbar's
+		 * reset/default routing leaves memory-mapped accesses
+		 * unreachable even though indirect-mode commands still work,
+		 * since nothing else configures this hardware.
+		 */
+		XSPIM_CfgTypeDef xspim_cfg = {
+			.nCSOverride = dev_cfg->xspim_ncs_override,
+			.IOPort = (dev_cfg->xspim_io_port == 2)
+					? HAL_XSPIM_IOPORT_2 : HAL_XSPIM_IOPORT_1,
+			.Req2AckTime = 1,
+		};
+
+		if (HAL_XSPIM_Config(&dev_data->hxspi, &xspim_cfg,
+				      HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) {
+			LOG_ERR("XSPIM crossbar config failed");
+			return -EIO;
+		}
+
+		LOG_DBG("XSPIM routed to port %d", dev_cfg->xspim_io_port);
+	}
+
 #if defined(XSPI_DCR1_DLYBYP)
 	/* XSPI delay block init Function */
 	HAL_XSPI_DLYB_CfgTypeDef xspi_delay_block_cfg = {0};
@@ -2543,6 +2567,10 @@ static int flash_stm32_xspi_init(const struct device *dev)
 		.pcfg = PINCTRL_DT_DEV_CONFIG_GET(STM32_XSPI_NODE(inst)),			\
 		.irq_config = flash_stm32_xspi_irq_config_func_##inst,				\
 		.mem_map_based_address = DT_REG_ADDR_BY_IDX(STM32_XSPI_NODE(inst), 1),		\
+		.xspim_io_port = DT_INST_PROP_OR(inst, xspim_io_port, 0),			\
+		.xspim_ncs_override = ((DT_INST_PROP(inst, ncs_line) == 1)			\
+					? HAL_XSPI_CSSEL_OVR_NCS1				\
+					: HAL_XSPI_CSSEL_OVR_NCS2),				\
 												\
 		/* Properties of the flash device */						\
 		.flash_size = DT_INST_PROP(inst, size) / 8,			/* In Bytes */	\

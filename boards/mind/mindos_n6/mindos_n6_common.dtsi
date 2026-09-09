@@ -17,6 +17,11 @@
 		zephyr,sram = &axisram2;
 		zephyr,canbus = &fdcan1;
 		spi-flash0 = &w25q64jv;
+		zephyr,flash-controller = &w25q64jv;
+		zephyr,flash = &ext_flash;
+		zephyr,code-partition = &slot0_partition;
+                mcuboot,image-ram = &axisram1;
+
 	};
 
 	leds: leds {
@@ -265,7 +270,6 @@ zephyr_udc1: &usbotg_hs2 {
 };
 
 &xspim {
-	/* To be moved to sb/fsbl target once sysbuild added to the board */
 	status = "okay";
 };
 
@@ -279,27 +283,67 @@ zephyr_udc1: &usbotg_hs2 {
 	w25q64jv: qspi-nor-flash@0 {
 		compatible = "st,stm32-xspi-nor";
 		reg = <0>;
-		size = <DT_SIZE_M(64)>; /* 64  Mbits */
+		size = <DT_SIZE_M(64)>; /* 64 Mbits = 8 MBytes */
 		ospi-max-frequency = <DT_FREQ_M(50)>;
 		spi-bus-width = <XSPI_QUAD_MODE>;
 		data-rate = <XSPI_STR_TRANSFER>;
+		/*
+		 * Matches the verified-working STM32CubeIDE FSBL exactly:
+		 * hxspi1.Instance = XSPI1, routed to XSPIM port 2 via an
+		 * explicit HAL_XSPIM_Config() call (IOPort=PORT_2). XSPI2 on
+		 * its own default port 2 was tried first (indirect-mode
+		 * commands worked, but memory-mapped reads still returned
+		 * all zeros even with an explicit crossbar config) -- so the
+		 * controller identity itself, not just the port routing,
+		 * matters here.
+		 */
+		xspim-io-port = <2>;
 //		four-byte-opcodes;
 		status = "okay";
 
-		partitions {
-			compatible = "fixed-partitions";
-			#address-cells = <1>;
-			#size-cells = <1>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* Memory-mapped XIP window, on the XSPI1 controller instance
+		 * (xspim-io-port above routes it to physical port 2). */
+		ranges = <0x0 0x90000000 DT_SIZE_M(8)>;
 
-			storage_partition: partition@3ff0000 {
-				label = "storage";
-				/*
-				 * Prevent access to the last 32bytes of the memory-mapped device
-				 * Issue described in the STM32N6xxxx errata sheet ES0620 Rev 1:
-				 * 2.4.5 Deadlock or data corruption when DQS is enabled and the
-				 * wrap request includes the last address of the memory
-				 */
-				reg = <0x3ff0000 (DT_SIZE_K(64) - 32)>;
+		ext_flash: ext-flash@0 {
+			compatible = "soc-nv-flash";
+			reg = <0x0 DT_SIZE_M(8)>;
+			write-block-size = <1>;
+			erase-block-size = <DT_SIZE_K(4)>;
+
+			partitions {
+				compatible = "fixed-partitions";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				boot_partition: partition@0 {
+					label = "mcuboot";
+					reg = <0x0 DT_SIZE_K(64)>;
+				};
+
+				/* Equal-sized slots (~3.94 MB each) for MCUboot swap-based updates */
+				slot0_partition: partition@10000 {
+					label = "image-0";
+					reg = <0x10000 0x3f0000>;
+				};
+
+				slot1_partition: partition@400000 {
+					label = "image-1";
+					reg = <0x400000 0x3f0000>;
+				};
+
+				storage_partition: partition@7f0000 {
+					label = "storage";
+					/*
+					 * Prevent access to the last 32bytes of the memory-mapped device
+					 * Issue described in the STM32N6xxxx errata sheet ES0620 Rev 1:
+					 * 2.4.5 Deadlock or data corruption when DQS is enabled and the
+					 * wrap request includes the last address of the memory
+					 */
+					reg = <0x7f0000 (DT_SIZE_K(64) - 32)>;
+				};
 			};
 		};
 	};

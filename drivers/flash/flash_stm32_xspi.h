@@ -90,6 +90,11 @@ struct flash_stm32_xspi_config {
 	bool four_byte_opcodes;
 	bool requires_ulbpr;
 	uint32_t mem_map_based_address;
+	/* 0 = no XSPIM crossbar override (controller stays on its default
+	 * port); else the "xspim-io-port" devicetree value (1 or 2).
+	 */
+	int xspim_io_port;
+	uint32_t xspim_ncs_override;
 #if STM32_XSPI_RESET_GPIO
 	const struct gpio_dt_spec reset;
 	int reset_gpios_duration;

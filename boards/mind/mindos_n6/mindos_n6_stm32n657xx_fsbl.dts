@@ -8,6 +8,11 @@
 #include "mindos_n6_common.dtsi"
 
 / {
-	model = "MindOS STM32N657L0 MCU board";
-	compatible = "st,stm32n657x0-mindos-sb";
+	model = "MindOS STM32N657L0 MCU board (FSBL)";
+	compatible = "st,stm32n657x0-mindos-fsbl";
 };
+
+&xspim {
+        status = "okay";
+};
+

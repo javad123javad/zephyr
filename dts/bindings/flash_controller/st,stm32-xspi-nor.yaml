@@ -54,6 +54,21 @@ properties:
     description: |
       Specifies which nCS line of the XSPI IO Manager is connected to the Flash.
 
+  xspim-io-port:
+    type: int
+    enum:
+      - 1
+      - 2
+    description: |
+      Physical XSPI Manager (XSPIM) port this controller instance's signals
+      must be routed to. Required only when the controller is wired to a
+      port other than its own default (e.g. the xspi1 controller physically
+      wired to XSPIM port 2 instead of port 1): triggers an explicit
+      HAL_XSPIM_Config() crossbar override at init time, since nothing else
+      configures this hardware and its reset/default state otherwise leaves
+      memory-mapped (though not indirect-mode) accesses unreachable. Leave
+      unset when the controller is already on its own default port.
+
 examples:
   - |
     mx25lm51245: xspi-nor-flash@0 {
