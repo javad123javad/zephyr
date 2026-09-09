@@ -13,9 +13,17 @@ else()
 
   set(app_base_addr 0x70000000)
   if(CONFIG_BOOTLOADER_MCUBOOT)
+    # With the zephyr,mapped-partition binding, dt_reg_addr() on a partition
+    # returns the fully address-translated (absolute, 0x90000000-based) CPU
+    # address rather than a bare offset into the flash chip -- so the flash
+    # controller's own base must be subtracted back out to get the offset
+    # the external loader's own (0x70000000-based) addressing needs.
+    dt_chosen(ext_flash_node PROPERTY "zephyr,flash")
+    dt_reg_addr(ext_flash_base_addr PATH "${ext_flash_node}")
     dt_nodelabel(slot0_partition NODELABEL "slot0_partition" REQUIRED)
     dt_reg_addr(slot0_partition_addr PATH ${slot0_partition})
-    math(EXPR app_base_addr "${app_base_addr} + ${slot0_partition_addr}")
+    math(EXPR slot0_partition_offset "${slot0_partition_addr} - ${ext_flash_base_addr}")
+    math(EXPR app_base_addr "${app_base_addr} + ${slot0_partition_offset}")
   endif()
   board_runner_args(stm32cubeprogrammer "--download-address=${app_base_addr}")
 endif()
