@@ -69,6 +69,19 @@ properties:
       memory-mapped (though not indirect-mode) accesses unreachable. Leave
       unset when the controller is already on its own default port.
 
+  unlock-risaf:
+    type: boolean
+    description: |
+      STM32N6 only. Opens this controller's RISAF (RIF-based memory-range
+      security filter -- RISAF11 for xspi1, RISAF12 for xspi2, RISAF13 for
+      xspi3) to full read/write access from any compartment/security state,
+      matching ST's own reference examples (e.g. STM32N6570-DK's
+      RISAF_Config()/set_risaf_default()). Without this, RISAF's reset
+      state may restrict the memory-mapped address space to a narrower set
+      of requesters than indirect-mode (register-interface) commands need,
+      which can leave memory-mapped reads silently returning zero while
+      indirect commands keep working.
+
 examples:
   - |
     mx25lm51245: xspi-nor-flash@0 {
