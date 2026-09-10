@@ -22,7 +22,12 @@
 		zephyr,code-partition = &slot0_partition;
 		mcuboot,image-ram = &axisram1;
 	};
-
+	ext_flash_mem: memory@70000000 {
+        	compatible = "zephyr,memory-region";
+        	reg = <0x70000000 (DT_SIZE_M(8) - 32)>;
+        	zephyr,memory-region = "EXTMEM";
+        	zephyr,memory-attr = <DT_MEM_ARM(ATTR_MPU_FLASH)>;
+    	};
 	leds: leds {
 		compatible = "gpio-leds";
 
@@ -272,12 +277,21 @@ zephyr_udc1: &usbotg_hs2 {
 	status = "okay";
 };
 
-&xspi1 {
+&xspi2 {
 	pinctrl-0 = <&xspim_p2_ncs1_pn1 &xspim_p2_clk_pn6
 		     &xspim_p2_io0_pn2 &xspim_p2_io1_pn3 &xspim_p2_io2_pn4
 		     &xspim_p2_io3_pn5>;
 	pinctrl-names = "default";
 	status = "okay";
+	/*
+	 * "It is recommended to be enabled in STR mode and disabled in DTR
+	 * mode" (st,stm32-ospi.yaml). We're in STR mode (w25q64jv doesn't
+	 * support DTR), so this should be set -- it wasn't, unlike
+	 * stm32n6570_dk, whose flash uses DTR (where the unset/disabled
+	 * default is correct), which is why comparing against it never
+	 * surfaced this.
+	 */
+	ssht-enable;
 
 	w25q64jv: qspi-nor-flash@0 {
 		compatible = "st,stm32-xspi-nor";
@@ -286,25 +300,11 @@ zephyr_udc1: &usbotg_hs2 {
 		ospi-max-frequency = <DT_FREQ_M(50)>;
 		spi-bus-width = <XSPI_QUAD_MODE>;
 		data-rate = <XSPI_STR_TRANSFER>;
-		/*
-		 * Matches the verified-working STM32CubeIDE FSBL exactly:
-		 * hxspi1.Instance = XSPI1, routed to XSPIM port 2 via an
-		 * explicit HAL_XSPIM_Config() call (IOPort=PORT_2). XSPI2 on
-		 * its own default port 2 was tried first (indirect-mode
-		 * commands worked, but memory-mapped reads still returned
-		 * all zeros even with an explicit crossbar config) -- so the
-		 * controller identity itself, not just the port routing,
-		 * matters here.
-		 */
-		xspim-io-port = <2>;
-//		four-byte-opcodes;
 		status = "okay";
 
 		#address-cells = <1>;
 		#size-cells = <1>;
-		/* Memory-mapped XIP window, on the XSPI1 controller instance
-		 * (xspim-io-port above routes it to physical port 2). */
-		ranges = <0x0 0x90000000 DT_SIZE_M(8)>;
+		ranges = <0x0 0x70000000 DT_SIZE_M(8)>;
 
 		ext_flash: ext-flash@0 {
 			compatible = "soc-nv-flash";
