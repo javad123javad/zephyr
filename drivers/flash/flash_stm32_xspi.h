@@ -95,16 +95,6 @@ struct flash_stm32_xspi_config {
 	 */
 	int xspim_io_port;
 	uint32_t xspim_ncs_override;
-#if defined(CONFIG_SOC_SERIES_STM32N6X)
-	/* NULL unless "unlock-risaf" is set: the RISAF instance (secure
-	 * alias) guarding this controller's memory-mapped address space,
-	 * and its hardware-defined address space limit (e.g.
-	 * RISAF11_LIMIT_ADDRESS_SPACE_SIZE) -- not the flash chip's own
-	 * (possibly much smaller) size.
-	 */
-	RISAF_TypeDef *risaf;
-	uint32_t risaf_limit;
-#endif
 #if STM32_XSPI_RESET_GPIO
 	const struct gpio_dt_spec reset;
 	int reset_gpios_duration;

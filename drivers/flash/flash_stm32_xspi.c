@@ -2114,35 +2114,6 @@ static int flash_stm32_xspi_dma_init(DMA_HandleTypeDef *hdma, struct stream *dma
 }
 #endif /* CONFIG_FLASH_STM32_XSPI_DMA */
 
-#if defined(CONFIG_SOC_SERIES_STM32N6X)
-/*
- * Opens this controller's RISAF (RIF-based memory-range security filter)
- * to full read/write access from any compartment/security state, matching
- * ST's own reference examples (e.g. STM32N6570-DK's
- * RISAF_Config()/set_risaf_default()). The controller's peripheral clock
- * must already be enabled before this is called.
- */
-static void stm32_xspi_risaf_unlock(RISAF_TypeDef *risaf, uint32_t limit_address)
-{
-	RISAF_BaseRegionConfig_t risaf_conf = {
-		.StartAddress = 0x0,
-		.EndAddress = limit_address,
-		.Filtering = RISAF_FILTER_ENABLE,
-		.PrivWhitelist = RIF_CID_NONE,
-		.ReadWhitelist = RIF_CID_MASK,
-		.WriteWhitelist = RIF_CID_MASK,
-	};
-
-	/* Two regions, fully overlapping: one for secure requests, one for
-	 * non-secure requests, so either security state can access it.
-	 */
-	risaf_conf.Secure = RIF_ATTRIBUTE_SEC;
-	HAL_RIF_RISAF_ConfigBaseRegion(risaf, 0, &risaf_conf);
-	risaf_conf.Secure = RIF_ATTRIBUTE_NSEC;
-	HAL_RIF_RISAF_ConfigBaseRegion(risaf, 1, &risaf_conf);
-}
-#endif /* CONFIG_SOC_SERIES_STM32N6X */
-
 static int flash_stm32_xspi_init(const struct device *dev)
 {
 	const struct flash_stm32_xspi_config *dev_cfg = dev->config;
@@ -2196,13 +2167,6 @@ static int flash_stm32_xspi_init(const struct device *dev)
 		LOG_ERR("Could not enable XSPI clock");
 		return -EIO;
 	}
-
-#if defined(CONFIG_SOC_SERIES_STM32N6X)
-	if (dev_cfg->risaf != NULL) {
-		stm32_xspi_risaf_unlock(dev_cfg->risaf, dev_cfg->risaf_limit);
-		LOG_DBG("RISAF unlocked");
-	}
-#endif
 
 	if (clock_control_get_rate(DEVICE_DT_GET(STM32_CLOCK_CONTROL_NODE),
 					(clock_control_subsys_t) &dev_cfg->pclken,
@@ -2567,25 +2531,6 @@ static int flash_stm32_xspi_init(const struct device *dev)
 #define DT_XSPI_STM32_DELAY_BLOCK_BYPASS(inst)	/* Not used */
 #endif /* XSPI_DCR1_DLYBYP */
 
-#if defined(CONFIG_SOC_SERIES_STM32N6X)
-/* Maps this controller instance's own register base address to its RISAF
- * (secure alias) and that RISAF's hardware-defined address space limit.
- */
-#define STM32_XSPI_RISAF(inst)								\
-	(DT_REG_ADDR(STM32_XSPI_NODE(inst)) == 0x58025000 ? RISAF11_S :		\
-	 DT_REG_ADDR(STM32_XSPI_NODE(inst)) == 0x5802a000 ? RISAF12_S :		\
-	 DT_REG_ADDR(STM32_XSPI_NODE(inst)) == 0x5802d000 ? RISAF13_S : NULL)
-#define STM32_XSPI_RISAF_LIMIT(inst)							\
-	(DT_REG_ADDR(STM32_XSPI_NODE(inst)) == 0x58025000 ? RISAF11_LIMIT_ADDRESS_SPACE_SIZE :	\
-	 DT_REG_ADDR(STM32_XSPI_NODE(inst)) == 0x5802a000 ? RISAF12_LIMIT_ADDRESS_SPACE_SIZE :	\
-	 DT_REG_ADDR(STM32_XSPI_NODE(inst)) == 0x5802d000 ? RISAF13_LIMIT_ADDRESS_SPACE_SIZE : 0)
-#define DT_XSPI_STM32_RISAF(inst)							\
-	.risaf = (DT_INST_PROP_OR(inst, unlock_risaf, 0) ? STM32_XSPI_RISAF(inst) : NULL),	\
-	.risaf_limit = STM32_XSPI_RISAF_LIMIT(inst),
-#else
-#define DT_XSPI_STM32_RISAF(inst) /* Not used */
-#endif /* CONFIG_SOC_SERIES_STM32N6X */
-
 #if defined(XSPI_DCR3_MAXTRAN)
 #define XSPI_STM32_MAXTRAN	\
 		.MaxTran = 0,
@@ -2626,7 +2571,6 @@ static int flash_stm32_xspi_init(const struct device *dev)
 		.xspim_ncs_override = ((DT_INST_PROP(inst, ncs_line) == 1)			\
 					? HAL_XSPI_CSSEL_OVR_NCS1				\
 					: HAL_XSPI_CSSEL_OVR_NCS2),				\
-		DT_XSPI_STM32_RISAF(inst)							\
 												\
 		/* Properties of the flash device */						\
 		.flash_size = DT_INST_PROP(inst, size) / 8,			/* In Bytes */	\

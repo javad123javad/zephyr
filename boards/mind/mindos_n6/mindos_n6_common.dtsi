@@ -20,8 +20,7 @@
 		zephyr,flash-controller = &w25q64jv;
 		zephyr,flash = &ext_flash;
 		zephyr,code-partition = &slot0_partition;
-                mcuboot,image-ram = &axisram1;
-
+		mcuboot,image-ram = &axisram1;
 	};
 
 	leds: leds {
@@ -298,15 +297,6 @@ zephyr_udc1: &usbotg_hs2 {
 		 * matters here.
 		 */
 		xspim-io-port = <2>;
-		/*
-		 * Matches ST's own reference (RISAF_Config()/set_risaf_default()
-		 * in the STM32N6570-DK examples, called for RISAF11/OCTOSPI1 at
-		 * 0x90000000): opens this controller's RISAF to full access,
-		 * since nothing else in Zephyr configures it and its reset
-		 * state may otherwise restrict memory-mapped reads more than
-		 * indirect-mode commands need.
-		 */
-		unlock-risaf;
 //		four-byte-opcodes;
 		status = "okay";
 
@@ -326,7 +316,6 @@ zephyr_udc1: &usbotg_hs2 {
 			ranges;
 
 			partitions {
-				//compatible = "fixed-partitions";
 				#address-cells = <1>;
 				#size-cells = <1>;
 				ranges;

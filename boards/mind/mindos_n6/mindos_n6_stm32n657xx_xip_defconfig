@@ -17,11 +17,5 @@ CONFIG_ARM_MPU=y
 # Enable HW stack protection
 CONFIG_HW_STACK_PROTECTION=y
 
-# Execute in place directly from external XIP flash. Everything else
-# (ROM_START_OFFSET, USE_DT_CODE_PARTITION) is handled automatically by
-# CONFIG_BOOTLOADER_MCUBOOT, which sysbuild sets when building this target
-# with `west build --sysbuild` (see board.yml/Kconfig.sysbuild).
-#CONFIG_XIP=y
-
 # HAL needs TRUSTED_EXECUTION_SECURE explicitly enabled
 CONFIG_TRUSTED_EXECUTION_SECURE=y

@@ -13,6 +13,5 @@
 };
 
 &xspim {
-        status = "okay";
+	status = "okay";
 };
-

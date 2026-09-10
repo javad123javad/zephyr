@@ -12,9 +12,6 @@
 	compatible = "st,stm32n657x0-mindos-xip";
 
 	chosen {
-		/* MCUboot-booted application: executes XIP from external flash,
-		 * uses the larger AXISRAM1 region for RAM (data/bss/heap/stack).
-		 */
 		zephyr,sram = &axisram1;
 	};
 };
