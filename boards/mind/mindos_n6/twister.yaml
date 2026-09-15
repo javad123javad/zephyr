@@ -23,6 +23,8 @@ vendor: st
 variants:
   mindos_n6/stm32n657xx:
     twister: false
+  mindos_n6/stm32n657xx/fsbl:
+    - twister: false
   mindos_n6/stm32n657xx/sb:
     toolchain:
       - zephyr
