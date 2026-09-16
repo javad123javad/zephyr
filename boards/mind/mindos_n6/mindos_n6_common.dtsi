@@ -268,25 +268,13 @@ zephyr_udc1: &usbotg_hs2 {
 	};
 };
 
-&xspim {
-	status = "okay";
-};
-
 &xspi2 {
 	pinctrl-0 = <&xspim_p2_ncs1_pn1 &xspim_p2_clk_pn6
 		     &xspim_p2_io0_pn2 &xspim_p2_io1_pn3 &xspim_p2_io2_pn4
 		     &xspim_p2_io3_pn5>;
 	pinctrl-names = "default";
 	status = "okay";
-	/*
-	 * "It is recommended to be enabled in STR mode and disabled in DTR
-	 * mode" (st,stm32-ospi.yaml). We're in STR mode (w25q64jv doesn't
-	 * support DTR), so this should be set -- it wasn't, unlike
-	 * stm32n6570_dk, whose flash uses DTR (where the unset/disabled
-	 * default is correct), which is why comparing against it never
-	 * surfaced this.
-	 */
-	ssht-enable;
+	//ssht-enable;
 
 	w25q64jv: qspi-nor-flash@0 {
 		compatible = "st,stm32-xspi-nor";
