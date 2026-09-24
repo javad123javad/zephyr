@@ -10,4 +10,8 @@
 / {
 	model = "MindOS N6 MCU board";
 	compatible = "st,stm32n657l0-mindos";
+
+	chosen {
+		zephyr,sram = &axisram1;
+	};
 };

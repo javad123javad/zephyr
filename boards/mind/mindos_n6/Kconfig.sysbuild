@@ -1,0 +1,10 @@
+# Copyright The Zephyr Project Contributors
+# SPDX-License-Identifier: Apache-2.0
+
+if BOARD_MINDOS_N6_STM32N657XX
+
+choice BOOTLOADER
+	default BOOTLOADER_MCUBOOT
+endchoice
+
+endif # BOARD_MINDOS_N6_STM32N657XX

@@ -1,0 +1,17 @@
+/*
+ * Copyright The Zephyr Project Contributors
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+#include "mindos_n6_common.dtsi"
+
+/ {
+	model = "MindOS N6 MCU board (FSBL)";
+	compatible = "st,stm32n657l0-mindos-fsbl";
+};
+
+&xspim {
+	status = "okay";
+};
