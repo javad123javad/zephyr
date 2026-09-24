@@ -959,6 +959,8 @@ static int stm32_xspi_set_memorymap(struct flash_stm32_xspi_data *dev_data,
 	HAL_StatusTypeDef ret;
 	XSPI_RegularCmdTypeDef s_command;
 	XSPI_MemoryMappedTypeDef s_MemMappedCfg;
+	const bool use_sfdp_cmds = (data_rate == XSPI_STR_TRANSFER) &&
+				   ((data_mode == XSPI_DUAL_MODE) || (data_mode == XSPI_QUAD_MODE));
 
 	stm32_xspi_bzero(&s_command, sizeof(s_command));
 	stm32_xspi_bzero(&s_MemMappedCfg, sizeof(s_MemMappedCfg));
@@ -1025,6 +1027,37 @@ static int stm32_xspi_set_memorymap(struct flash_stm32_xspi_data *dev_data,
 	s_command.SIOOMode = HAL_XSPI_SIOO_INST_EVERY_CMD;
 #endif /* XSPI_CCR_SIOO */
 
+	if (use_sfdp_cmds) {
+		/* Dual/quad STR: use the read command selected from SFDP */
+		s_command.InstructionMode = HAL_XSPI_INSTRUCTION_1_LINE;
+		s_command.InstructionWidth = HAL_XSPI_INSTRUCTION_8_BITS;
+		s_command.Instruction = dev_data->read_opcode;
+		s_command.DummyCycles = dev_data->read_dummy;
+
+		switch (dev_data->read_mode) {
+		case JESD216_MODE_112:
+			s_command.AddressMode = HAL_XSPI_ADDRESS_1_LINE;
+			s_command.DataMode = HAL_XSPI_DATA_2_LINES;
+			break;
+		case JESD216_MODE_122:
+			s_command.AddressMode = HAL_XSPI_ADDRESS_2_LINES;
+			s_command.DataMode = HAL_XSPI_DATA_2_LINES;
+			break;
+		case JESD216_MODE_114:
+			s_command.AddressMode = HAL_XSPI_ADDRESS_1_LINE;
+			s_command.DataMode = HAL_XSPI_DATA_4_LINES;
+			break;
+		case JESD216_MODE_144:
+			s_command.AddressMode = HAL_XSPI_ADDRESS_4_LINES;
+			s_command.DataMode = HAL_XSPI_DATA_4_LINES;
+			break;
+		default:
+			s_command.AddressMode = HAL_XSPI_ADDRESS_1_LINE;
+			s_command.DataMode = HAL_XSPI_DATA_1_LINE;
+			break;
+		}
+	}
+
 	ret = HAL_XSPI_Command(&dev_data->hxspi, &s_command, HAL_XSPI_TIMEOUT_DEFAULT_VALUE);
 	if (ret != HAL_OK) {
 		XSPI_LOG_ERR("%d: Failed to set memory map", ret);
@@ -1033,7 +1066,31 @@ static int stm32_xspi_set_memorymap(struct flash_stm32_xspi_data *dev_data,
 
 	/* Initialize the program command */
 	s_command.OperationType = HAL_XSPI_OPTYPE_WRITE_CFG;
-	if (data_rate == XSPI_STR_TRANSFER) {
+	if (use_sfdp_cmds) {
+		s_command.Instruction = dev_data->write_opcode;
+		s_command.DummyCycles = 0U;
+
+		switch (dev_data->write_opcode) {
+		case SPI_NOR_CMD_PP_1_1_2:
+			s_command.AddressMode = HAL_XSPI_ADDRESS_1_LINE;
+			s_command.DataMode = HAL_XSPI_DATA_2_LINES;
+			break;
+		case SPI_NOR_CMD_PP_1_1_4:
+		case SPI_NOR_CMD_PP_1_1_4_4B:
+			s_command.AddressMode = HAL_XSPI_ADDRESS_1_LINE;
+			s_command.DataMode = HAL_XSPI_DATA_4_LINES;
+			break;
+		case SPI_NOR_CMD_PP_1_4_4:
+		case SPI_NOR_CMD_PP_1_4_4_4B:
+			s_command.AddressMode = HAL_XSPI_ADDRESS_4_LINES;
+			s_command.DataMode = HAL_XSPI_DATA_4_LINES;
+			break;
+		default:
+			s_command.AddressMode = HAL_XSPI_ADDRESS_1_LINE;
+			s_command.DataMode = HAL_XSPI_DATA_1_LINE;
+			break;
+		}
+	} else if (data_rate == XSPI_STR_TRANSFER) {
 		s_command.Instruction = (data_mode == XSPI_SPI_MODE)
 					? ((stm32_xspi_hal_address_size(dev_data) ==
 					HAL_XSPI_ADDRESS_24_BITS)
