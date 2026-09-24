@@ -5,7 +5,7 @@
 
 if BOARD_MINDOS_N6
 
-configdefault NET_L2_ETHERNET
+configdefault ETH_DRIVER
 	default y
 
 configdefault OTP
