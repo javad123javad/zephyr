@@ -165,7 +165,8 @@ io_i2c: &i2c2 {
 io_spi:&spi2 {
 	clocks = <&rcc STM32_CLOCK(APB1, 14)>,
 		 <&rcc STM32_SRC_CKPER SPI2_SEL(1)>;
-	pinctrl-0 = <&spi2_nss_pa11 &spi2_sck_pf2 &spi2_miso_pd6 &spi2_mosi_pd2>;
+	/* IO_SPI_CS0 (PA11) is a GPIO driven by the I/O card SPI port slots */
+	pinctrl-0 = <&spi2_sck_pf2 &spi2_miso_pd6 &spi2_mosi_pd2>;
 	pinctrl-names = "default";
 	status = "okay";
 };
@@ -358,4 +359,87 @@ zephyr_udc1: &usbotg_hs2 {
 	clocks = <&rcc STM32_CLOCK(APB4, 16)>,
 		 <&rcc STM32_SRC_LSE RTC_SEL(1)>;
 	status = "disabled";
+};
+
+/* DIN41612 I/O card connector (see the mind_io module) */
+/ {
+	mio_gpios: connector-gpios {
+		compatible = "mind,din41612-gpios";
+		#gpio-cells = <2>;
+		gpio-map-mask = <0xffffffff 0xffffffc0>;
+		gpio-map-pass-thru = <0 0x3f>;
+		gpio-map = <0 0 &gpiod 11 0>,	/* IO_GPIO0 */
+			   <1 0 &gpioe 0 0>,	/* IO_GPIO1 */
+			   <2 0 &gpiob 2 0>,	/* IO_GPIO2 */
+			   <3 0 &gpiob 3 0>;	/* IO_GPIO3 */
+	};
+
+	mio_connector: connector {
+		compatible = "mind,din41612-io";
+		i2c-cnf = <&i2c1>;
+		i2c-io = <&i2c2>;
+		spi = <&spi2>;
+		uart = <&usart2>;
+		rs485 = <&usart3>;
+		i2s = <&i2s1>;
+		spi-cs0-gpios = <&gpioa 11 GPIO_ACTIVE_HIGH>;
+		fault-led-gpios = <&gpiod 5 GPIO_ACTIVE_HIGH>;
+		io-gpios = <&mio_gpios 0 0>, <&mio_gpios 1 0>, <&mio_gpios 2 0>, <&mio_gpios 3 0>;
+
+		mio_i2c_port0: i2c-port-0 {
+			compatible = "mind,io-i2c-port";
+			slot = <0>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		mio_i2c_port1: i2c-port-1 {
+			compatible = "mind,io-i2c-port";
+			slot = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		mio_i2c_port2: i2c-port-2 {
+			compatible = "mind,io-i2c-port";
+			slot = <2>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		mio_i2c_port3: i2c-port-3 {
+			compatible = "mind,io-i2c-port";
+			slot = <3>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		mio_spi_port0: spi-port-0 {
+			compatible = "mind,io-spi-port";
+			slot = <0>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		mio_spi_port1: spi-port-1 {
+			compatible = "mind,io-spi-port";
+			slot = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		mio_spi_port2: spi-port-2 {
+			compatible = "mind,io-spi-port";
+			slot = <2>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		mio_spi_port3: spi-port-3 {
+			compatible = "mind,io-spi-port";
+			slot = <3>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+	};
 };
