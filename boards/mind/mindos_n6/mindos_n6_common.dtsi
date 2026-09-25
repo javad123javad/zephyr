@@ -187,6 +187,16 @@ io_debug:&usart1 {
 	status = "okay";
 };
 
+io_rs485: &usart3 {
+	clocks = <&rcc STM32_CLOCK(APB1, 18)>,
+		 <&rcc STM32_SRC_CKPER USART3_SEL(1)>;
+	pinctrl-0 = <&usart3_tx_pb10 &usart3_rx_pb11 &usart3_de_pg2>;
+	pinctrl-names = "default";
+	current-speed = <115200>;
+	de-enable;
+	status = "okay";
+};
+
 io_uart:&usart2 {
         clocks = <&rcc STM32_CLOCK(APB1, 17)>,
                  <&rcc STM32_SRC_CKPER USART2_SEL(1)>;
